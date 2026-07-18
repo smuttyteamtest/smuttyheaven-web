@@ -141,6 +141,34 @@ export interface UpdatedChapterContent {
   updated: boolean;
 }
 
+// ── Admin ────────────────────────────────────────────────────────────────
+export interface AdminUser extends PublicUser {
+  status: UserStatus;
+}
+
+export interface AdminStats {
+  users: { total: number; byRole: Record<Role, number> };
+  novels: { total: number; published: number };
+  chapters: { total: number };
+  recentSignups: { last7Days: number; last30Days: number };
+}
+
+export interface FeaturedFlag {
+  id: number;
+  featured: boolean;
+}
+
+export interface TrashedNovel {
+  id: number;
+  status: NovelStatus;
+}
+
+export interface ContributorGrant {
+  novelId: number;
+  userId: number;
+  role: ContributorRole;
+}
+
 // ── Response envelopes ───────────────────────────────────────────────────
 export interface NovelsResponse extends Paginated {
   novels: Novel[];
@@ -168,4 +196,12 @@ export interface RecommendationsResponse {
 
 export interface InListResponse {
   inList: boolean;
+}
+
+export interface AdminUsersResponse extends Paginated {
+  users: AdminUser[];
+}
+
+export interface AdminUserResponse {
+  user: AdminUser;
 }

@@ -54,9 +54,28 @@ Phase 2 notes:
   role 403s are surfaced with a "log out and back in" hint — roles are baked
   into the login token.
 
-Not yet built (tracked as GitHub issues): admin dashboard, and features
-blocked on API gaps (covers in the catalog, featured rail, account settings —
-see handoff §8).
+## Phase 2 — admin dashboard (issue #2)
+
+| Route | Page |
+|---|---|
+| `/admin` | Admin — role-gated (`admin` only); tabs for Overview / Users / Novels / Contributors |
+
+- **Overview**: site stats from `GET /api/admin/stats` (accounts by role,
+  novels, chapters, recent signups).
+- **Users**: requires a search term before listing (~18k accounts); change
+  role (with the "must re-login for it to take effect" caveat surfaced) and
+  suspend/activate. Your own row's controls are disabled.
+- **Novels**: feature/unfeature (blind toggles — the API has no read of the
+  flag yet, issue #4), trash with a two-step confirm, restore
+  session-trashed rows inline, plus a restore-by-id card (trashed novels
+  vanish from search).
+- **Contributors**: grant writer/translator on a specific novel via
+  search-assisted user/novel pickers; 409 duplicates surface verbatim, and
+  a mismatched app role triggers a "fix it in the Users tab" hint. Grants
+  are write-only in the API (no list/revoke yet).
+
+Not yet built (tracked as GitHub issues): features blocked on API gaps
+(covers in the catalog, featured rail, account settings — see handoff §8).
 
 ## Project layout
 
@@ -67,12 +86,12 @@ src/
   components/   NavBar, Cover (placeholder fallback), NovelCard, Rail,
                 ChapterList, ListButtons, GenreChips, Pager, SafeHtml,
                 skeletons, RequireAuth/RequireRole, StatusChip,
-                ChapterEditorPanel
+                ChapterEditorPanel, Admin{Users,Novels,Contributors}Panel
   hooks/        useAsync, useDebounce
   lib/          sanitize (DOMPurify), formatting/paths, roles,
                 workspace (localStorage my-novels stopgap), payload size guard
   pages/        Home, Browse, Novel, Reader, Library, Login, Register,
-                Studio, NovelEditor, 404
+                Studio, NovelEditor, Admin, 404
   styles/       tokens.css (StarChart tokens), app.css
 ```
 

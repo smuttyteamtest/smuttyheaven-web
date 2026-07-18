@@ -32,6 +32,11 @@ export default function NavBar() {
               Studio
             </NavLink>
           )}
+          {user?.role === "admin" && (
+            <NavLink to="/admin" className={linkClass}>
+              Admin
+            </NavLink>
+          )}
         </nav>
         <div className="navbar-auth">
           {user ? (

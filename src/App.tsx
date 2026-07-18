@@ -2,7 +2,8 @@ import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import RequireAuth from "./components/RequireAuth";
 import RequireRole from "./components/RequireRole";
-import { STUDIO_ROLES } from "./lib/roles";
+import { ADMIN_ROLES, STUDIO_ROLES } from "./lib/roles";
+import AdminPage from "./pages/AdminPage";
 import BrowsePage from "./pages/BrowsePage";
 import HomePage from "./pages/HomePage";
 import LibraryPage from "./pages/LibraryPage";
@@ -47,6 +48,14 @@ export default function App() {
             element={
               <RequireRole roles={STUDIO_ROLES}>
                 <NovelEditorPage />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <RequireRole roles={ADMIN_ROLES} who="site admins">
+                <AdminPage />
               </RequireRole>
             }
           />

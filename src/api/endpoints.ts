@@ -1,9 +1,15 @@
 import { api, qs } from "./client";
 import type {
+  AdminStats,
+  AdminUserResponse,
+  AdminUsersResponse,
   AuthResponse,
   Chapter,
+  ContributorGrant,
+  ContributorRole,
   CreatedChapter,
   CreatedNovel,
+  FeaturedFlag,
   Genre,
   GenresResponse,
   HistoryResponse,
@@ -18,9 +24,12 @@ import type {
   Progress,
   RecommendationsResponse,
   RelatedResponse,
+  Role,
+  TrashedNovel,
   UpdatedChapterContent,
   UpdatedChapterMeta,
   UpdatedNovel,
+  UserStatus,
 } from "./types";
 
 // ── Auth ─────────────────────────────────────────────────────────────────
@@ -201,5 +210,68 @@ export function updateChapterContent(
   }).then((res) => {
     novelCache.delete(res.novelId);
     return res;
+  });
+}
+
+// ── Admin ────────────────────────────────────────────────────────────────
+export function fetchAdminStats(): Promise<AdminStats> {
+  return api("/api/admin/stats");
+}
+
+export function fetchAdminUsers(
+  query: { page?: number; limit?: number; search?: string } = {},
+): Promise<AdminUsersResponse> {
+  return api(`/api/admin/users${qs({ ...query })}`);
+}
+
+export function updateUserRole(
+  userId: number,
+  role: Role,
+): Promise<AdminUserResponse> {
+  return api(`/api/admin/users/${userId}/role`, {
+    method: "PATCH",
+    body: JSON.stringify({ role }),
+  });
+}
+
+export function updateUserStatus(
+  userId: number,
+  status: UserStatus,
+): Promise<AdminUserResponse> {
+  return api(`/api/admin/users/${userId}/status`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
+}
+
+// Soft delete — restore is updateNovel(id, { status: "publish" }), which
+// admins can call on any novel (they bypass contributor checks).
+export function trashNovel(id: number): Promise<TrashedNovel> {
+  return api<TrashedNovel>(`/api/admin/novels/${id}`, {
+    method: "DELETE",
+  }).then((res) => {
+    novelCache.delete(id);
+    return res;
+  });
+}
+
+export function setNovelFeatured(
+  id: number,
+  featured: boolean,
+): Promise<FeaturedFlag> {
+  return api(`/api/admin/novels/${id}/feature`, {
+    method: "PATCH",
+    body: JSON.stringify({ featured }),
+  });
+}
+
+export function addContributor(data: {
+  userId: number;
+  novelId: number;
+  role: ContributorRole;
+}): Promise<ContributorGrant> {
+  return api("/api/admin/contributors", {
+    method: "POST",
+    body: JSON.stringify(data),
   });
 }

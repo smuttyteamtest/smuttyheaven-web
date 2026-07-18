@@ -3,6 +3,12 @@ import type { Role } from "../api/types";
 /** Roles that see the Studio at all. */
 export const STUDIO_ROLES: Role[] = ["writer", "translator", "admin"];
 
+/** The admin dashboard. */
+export const ADMIN_ROLES: Role[] = ["admin"];
+
+/** Every assignable app role, for the admin role picker. */
+export const ALL_ROLES: Role[] = ["reader", "writer", "translator", "admin"];
+
 /** Create novels, edit novel details, add chapters, edit chapter metadata. */
 export function canWrite(role: Role): boolean {
   return role === "writer" || role === "admin";

@@ -7,9 +7,11 @@ import { SkeletonGrid } from "./Skeletons";
 /** Like RequireAuth, but additionally gates on the user's app role. */
 export default function RequireRole({
   roles,
+  who = "writers and translators",
   children,
 }: {
   roles: Role[];
+  who?: string;
   children: ReactNode;
 }) {
   const { user, booting } = useAuth();
@@ -31,7 +33,7 @@ export default function RequireRole({
     return (
       <div className="container error-state">
         <p>
-          This area is for writers and translators. Your account is a{" "}
+          This area is for {who}. Your account is a{" "}
           <strong>{user.role}</strong>.
         </p>
         <p className="text-small text-tertiary">
