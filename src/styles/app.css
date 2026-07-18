@@ -769,6 +769,251 @@ select.input {
   margin-top: var(--sp-2);
 }
 
+/* ── Banners ───────────────────────────────────────────────────────────── */
+
+.note-banner,
+.warn-banner {
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+  margin: var(--sp-3) 0;
+}
+.note-banner {
+  background: rgba(96, 165, 250, 0.12);
+  border: 1px solid var(--info);
+  color: var(--content-secondary);
+}
+.note-banner code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--content-primary);
+}
+.warn-banner {
+  background: rgba(251, 191, 36, 0.12);
+  border: 1px solid var(--warning);
+  color: var(--content-secondary);
+}
+
+.form-success {
+  background: rgba(74, 222, 128, 0.15);
+  border: 1px solid var(--success);
+  color: var(--success);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 14px;
+  margin-bottom: var(--sp-3);
+}
+
+/* ── Textareas ─────────────────────────────────────────────────────────── */
+
+textarea.input {
+  resize: vertical;
+  line-height: 1.6;
+}
+.textarea { min-height: 120px; }
+.textarea-lg {
+  min-height: 320px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.byte-meter {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--content-tertiary);
+  margin-top: 4px;
+}
+.byte-meter.is-over { color: var(--error); }
+
+/* ── Studio ────────────────────────────────────────────────────────────── */
+
+.studio-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: var(--sp-5);
+  align-items: start;
+  margin-top: var(--sp-4);
+}
+
+@media (max-width: 860px) {
+  .studio-layout { grid-template-columns: 1fr; }
+  .studio-side { order: -1; }
+}
+
+.studio-list {
+  display: grid;
+  gap: var(--sp-3);
+}
+
+.studio-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+}
+
+.studio-item-info { min-width: 0; }
+
+.studio-item-title {
+  font-family: var(--font-headline);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--content-primary);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.studio-item-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+.studio-item-actions {
+  display: flex;
+  gap: var(--sp-2);
+  flex-wrap: wrap;
+}
+
+.track-results {
+  list-style: none;
+  margin: var(--sp-2) 0 0;
+  padding: 0;
+}
+.track-results li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.track-results li:last-child { border-bottom: none; }
+.track-result-title {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Novel editor ──────────────────────────────────────────────────────── */
+
+.editor-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+  margin: var(--sp-5) 0 var(--sp-3);
+}
+
+.editor-head-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  flex: 1;
+  min-width: 0;
+}
+.editor-head-title h2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-layout {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: var(--sp-5);
+  align-items: start;
+  margin-top: var(--sp-3);
+}
+
+@media (max-width: 860px) {
+  .editor-layout { grid-template-columns: 1fr; }
+}
+
+/* Chapter rows are buttons (open the editor panel), styled like the reader's
+   chapter links. */
+.chapter-list .chapter-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--content-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+.chapter-list .chapter-row:hover { background: rgba(167, 139, 250, 0.08); }
+.chapter-list .chapter-row .chapter-name { min-width: 0; }
+
+.chapter-edit-hint {
+  font-size: 12px;
+  color: var(--content-tertiary);
+  white-space: nowrap;
+}
+.chapter-row:hover .chapter-edit-hint { color: var(--nebula); }
+
+.chapter-editor {
+  margin-bottom: var(--sp-4);
+}
+
+.chapter-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+.chapter-editor-head h4 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chapter-editor-meta {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px;
+  gap: var(--sp-3);
+}
+@media (max-width: 640px) {
+  .chapter-editor-meta { grid-template-columns: 1fr; }
+}
+
+.chapter-editor-texthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+}
+
+.chapter-preview {
+  background: var(--surface-sunken);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3) var(--sp-4);
+  min-height: 320px;
+  max-height: 480px;
+  overflow-y: auto;
+  line-height: 1.8;
+}
+
+.chapter-editor-actions {
+  display: flex;
+  gap: var(--sp-2);
+  justify-content: flex-end;
+}
+
 /* ── Footer ────────────────────────────────────────────────────────────── */
 
 .footer {

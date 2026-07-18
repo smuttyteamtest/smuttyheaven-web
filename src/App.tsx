@@ -1,14 +1,18 @@
 import { Route, Routes } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import RequireAuth from "./components/RequireAuth";
+import RequireRole from "./components/RequireRole";
+import { STUDIO_ROLES } from "./lib/roles";
 import BrowsePage from "./pages/BrowsePage";
 import HomePage from "./pages/HomePage";
 import LibraryPage from "./pages/LibraryPage";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
+import NovelEditorPage from "./pages/NovelEditorPage";
 import NovelPage from "./pages/NovelPage";
 import ReaderPage from "./pages/ReaderPage";
 import RegisterPage from "./pages/RegisterPage";
+import StudioPage from "./pages/StudioPage";
 
 export default function App() {
   return (
@@ -28,6 +32,22 @@ export default function App() {
               <RequireAuth>
                 <LibraryPage />
               </RequireAuth>
+            }
+          />
+          <Route
+            path="/studio"
+            element={
+              <RequireRole roles={STUDIO_ROLES}>
+                <StudioPage />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="/studio/novel/:id"
+            element={
+              <RequireRole roles={STUDIO_ROLES}>
+                <NovelEditorPage />
+              </RequireRole>
             }
           />
           <Route path="*" element={<NotFoundPage />} />

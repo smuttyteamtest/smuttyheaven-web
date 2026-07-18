@@ -2,6 +2,8 @@ import { api, qs } from "./client";
 import type {
   AuthResponse,
   Chapter,
+  CreatedChapter,
+  CreatedNovel,
   Genre,
   GenresResponse,
   HistoryResponse,
@@ -11,10 +13,14 @@ import type {
   MeResponse,
   NovelDetail,
   NovelSort,
+  NovelStatus,
   NovelsResponse,
   Progress,
   RecommendationsResponse,
   RelatedResponse,
+  UpdatedChapterContent,
+  UpdatedChapterMeta,
+  UpdatedNovel,
 } from "./types";
 
 // ── Auth ─────────────────────────────────────────────────────────────────
@@ -132,4 +138,68 @@ export function fetchHistory(page = 1, limit = 20): Promise<HistoryResponse> {
 // ── Recommendations ──────────────────────────────────────────────────────
 export function fetchRecommendations(): Promise<RecommendationsResponse> {
   return api("/api/me/recommendations");
+}
+
+// ── Authoring (writer / translator) ──────────────────────────────────────
+// Every write drops the reader-side novel cache so the detail page and the
+// prev/next navigation see fresh titles/chapters after an edit.
+
+export function createNovel(data: {
+  title: string;
+  description?: string;
+  status?: NovelStatus;
+}): Promise<CreatedNovel> {
+  return api("/api/novels", { method: "POST", body: JSON.stringify(data) });
+}
+
+export function updateNovel(
+  id: number,
+  data: Partial<{ title: string; description: string; status: NovelStatus }>,
+): Promise<UpdatedNovel> {
+  return api<UpdatedNovel>(`/api/novels/${id}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  }).then((res) => {
+    novelCache.delete(id);
+    return res;
+  });
+}
+
+export function createChapter(
+  novelId: number,
+  data: { name: string; content: string; index?: number },
+): Promise<CreatedChapter> {
+  return api<CreatedChapter>(`/api/novels/${novelId}/chapters`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  }).then((res) => {
+    novelCache.delete(novelId);
+    return res;
+  });
+}
+
+export function updateChapterMeta(
+  chapterId: number,
+  data: Partial<{ name: string; index: number }>,
+): Promise<UpdatedChapterMeta> {
+  return api<UpdatedChapterMeta>(`/api/chapters/${chapterId}`, {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  }).then((res) => {
+    novelCache.delete(res.novelId);
+    return res;
+  });
+}
+
+export function updateChapterContent(
+  chapterId: number,
+  content: string,
+): Promise<UpdatedChapterContent> {
+  return api<UpdatedChapterContent>(`/api/chapters/${chapterId}/content`, {
+    method: "PATCH",
+    body: JSON.stringify({ content }),
+  }).then((res) => {
+    novelCache.delete(res.novelId);
+    return res;
+  });
 }

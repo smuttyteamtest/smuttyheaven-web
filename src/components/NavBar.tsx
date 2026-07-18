@@ -1,5 +1,6 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { STUDIO_ROLES } from "../lib/roles";
 
 export default function NavBar() {
   const { user, logout } = useAuth();
@@ -24,6 +25,11 @@ export default function NavBar() {
           {user && (
             <NavLink to="/library" className={linkClass}>
               My Library
+            </NavLink>
+          )}
+          {user && STUDIO_ROLES.includes(user.role) && (
+            <NavLink to="/studio" className={linkClass}>
+              Studio
             </NavLink>
           )}
         </nav>

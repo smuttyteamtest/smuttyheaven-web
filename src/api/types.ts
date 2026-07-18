@@ -108,6 +108,39 @@ export interface Recommendation {
   reason: string; // display-ready, e.g. "Because you read Fantasy"
 }
 
+// ── Authoring (writer / translator) ──────────────────────────────────────
+export interface CreatedNovel {
+  id: number;
+  title: string;
+  slug: string;
+  status: NovelStatus;
+}
+
+export interface UpdatedNovel extends CreatedNovel {
+  description: string;
+}
+
+export interface CreatedChapter {
+  id: number;
+  novelId: number;
+  name: string;
+  slug: string;
+  index: number;
+}
+
+export interface UpdatedChapterMeta {
+  id: number;
+  novelId: number;
+  name: string;
+  index: number;
+}
+
+export interface UpdatedChapterContent {
+  id: number;
+  novelId: number;
+  updated: boolean;
+}
+
 // ── Response envelopes ───────────────────────────────────────────────────
 export interface NovelsResponse extends Paginated {
   novels: Novel[];
