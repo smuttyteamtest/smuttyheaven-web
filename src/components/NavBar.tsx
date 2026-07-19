@@ -41,9 +41,9 @@ export default function NavBar() {
         <div className="navbar-auth">
           {user ? (
             <>
-              <span className="navbar-user" title={user.username}>
+              <Link className="navbar-user" to="/account" title={user.username}>
                 {user.displayName}
-              </span>
+              </Link>
               <button
                 className="btn btn-ghost btn-sm"
                 onClick={() => {
