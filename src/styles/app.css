@@ -365,6 +365,88 @@ select.input {
   filter: drop-shadow(var(--glow-star-md));
 }
 
+/* ── Featured hero rail ────────────────────────────────────────────────── */
+/* Admin-curated highlight — the one place star-yellow leads (see DESIGN.md:
+   star is reserved for achievements/highlights, never combined with nebula
+   glow on the same element). */
+
+.featured-rail {
+  margin: var(--sp-4) 0 var(--sp-5);
+}
+
+.featured-rail .featured-star {
+  color: var(--star);
+  filter: drop-shadow(var(--glow-star-sm));
+}
+
+.featured-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: min(380px, 86vw);
+  gap: var(--sp-4);
+  overflow-x: auto;
+  padding: var(--sp-2) 2px var(--sp-4);
+  scrollbar-width: thin;
+  scroll-snap-type: x proximity;
+}
+.featured-track > * { scroll-snap-align: start; }
+
+.featured-card {
+  display: flex;
+  gap: var(--sp-3);
+  color: var(--content-primary);
+  transition: transform 0.15s ease;
+}
+a.featured-card:hover {
+  text-decoration: none;
+  transform: translateY(-2px);
+}
+
+.featured-card-cover {
+  width: 104px;
+  flex-shrink: 0;
+}
+.skeleton.featured-card-cover {
+  aspect-ratio: 2 / 3;
+  border-radius: var(--radius-lg);
+}
+
+.featured-card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  min-width: 0;
+  flex: 1;
+}
+
+.featured-card-title {
+  font-family: var(--font-headline);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.featured-card-cta {
+  font-size: 14px;
+  color: var(--content-secondary);
+}
+
+.chip-featured {
+  display: inline-block;
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  background: rgba(253, 224, 71, 0.2);
+  color: var(--star);
+}
+
 /* ── Rails & grids ─────────────────────────────────────────────────────── */
 
 .rail {

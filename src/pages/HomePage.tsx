@@ -6,6 +6,7 @@ import {
 } from "../api/endpoints";
 import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
+import FeaturedRail from "../components/FeaturedRail";
 import GenreChips from "../components/GenreChips";
 import Rail from "../components/Rail";
 import type { NovelCardData } from "../components/NovelCard";
@@ -15,6 +16,11 @@ export default function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  // Admin-curated hero — the rail hides itself while nothing is featured.
+  const featured = useAsync(
+    () => fetchNovels({ featured: true, limit: 10 }),
+    [],
+  );
   const popular = useAsync(() => fetchNovels({ sort: "popular", limit: 12 }), []);
   const latest = useAsync(() => fetchNovels({ sort: "latest", limit: 12 }), []);
   const history = useAsync(() => fetchHistory(1, 12), [user?.id], !!user);
@@ -71,6 +77,8 @@ export default function HomePage() {
       </div>
 
       <div className="container">
+        <FeaturedRail novels={featured.data?.novels} loading={featured.loading} />
+
         <GenreChips
           max={12}
           onSelect={(slug) =>

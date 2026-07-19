@@ -113,7 +113,7 @@ The API was designed with these screens in mind (naming is up to you):
 
 | Page                     | Powered by                                                                  |
 |--------------------------|------------------------------------------------------------------------------|
-| **Home / discover**      | `GET /api/novels?sort=popular` or `?sort=latest`, `GET /api/me/recommendations` (if logged in) |
+| **Home / discover**      | `GET /api/novels?featured=true` (hero rail), `GET /api/novels?sort=popular` or `?sort=latest`, `GET /api/me/recommendations` (if logged in) |
 | **Browse / search**      | `GET /api/novels?search=&genre=&sort=&page=` + `GET /api/genres` for the filter UI |
 | **Genre page**           | `GET /api/novels?genre=<slug>`                                              |
 | **Novel detail**         | `GET /api/novels/:id` (title, HTML description, full chapter list), `GET /api/novels/:id/related` ("You may also like"), `GET /api/me/lists/:type/:novelId` (is it in my lists?), `GET /api/me/progress/:novelId` ("Continue from Chapter 42") |
@@ -195,7 +195,7 @@ Client-side form rules (mirror of the server's validation):
 
 | Method | Path                      | Notes |
 |--------|---------------------------|-------|
-| GET 🔓 | `/api/novels`             | Query: `?page`, `?limit`, `?search` (title substring), `?sort=latest\|title\|popular`, `?genre=<slug>`. → `{ page, limit, total, novels: [{ id, title, slug, cover, date }] }`. |
+| GET 🔓 | `/api/novels`             | Query: `?page`, `?limit`, `?search` (title substring), `?sort=latest\|title\|popular`, `?genre=<slug>`, `?featured=true` (admin-curated only). → `{ page, limit, total, novels: [{ id, title, slug, cover, date }] }`. |
 | GET 🔓 | `/api/novels/:id`         | One novel **+ full chapter list** (sorted by `index`). → `{ id, title, slug, cover, date, description, chapters: [{ id, name, slug, index, date }] }`. |
 | GET 🔓 | `/api/novels/:id/related` | Up to 10 novels sharing the most genres. → `{ novels }`. |
 | GET 🔓 | `/api/chapters/:id`       | The reader payload. → `{ id, name, content }` — `content` is HTML (sanitize!). |

@@ -384,6 +384,8 @@ defaults):
 
 | `genre` | — | genre **slug** from `GET /api/genres`, e.g. `fantasy` |
 
+| `featured` | — | `true` → only admin-featured novels (set via `PATCH /api/admin/novels/:id/feature`); any other value = no filter |
+
 `200`:
 
 ```json
@@ -822,9 +824,9 @@ public/reader endpoints immediately.
 
 Body `{ "featured": true|false }` → `200 { "id": 8757, "featured": true }`.
 
-Idempotent both ways. ⚠️ There is \*\*no public endpoint that returns featured
+Idempotent both ways. The public read is `GET /api/novels?featured=true`
 
-novels yet\*\* — see [Known gaps](#8-known-gaps).
+(added 2026-07-19; formerly known-gap #2).
 
 #### `POST /api/admin/contributors` 👑
 
@@ -1192,13 +1194,15 @@ recommendations. URLs are still hot-linked to the old WordPress domain —
 
 keep the placeholder + `onerror` fallback.
 
-2. **Featured novels can be set but not read** — admins can flag novels
+2. ~~**Featured novels can be set but not read**~~ — **Resolved 2026-07-19:**
 
-(`PATCH /api/admin/novels/:id/feature`) but there's no public
+`GET /api/novels?featured=true` returns only admin-featured novels (all the
 
-`GET` that returns featured novels, so a "Featured" hero section can't be
+usual list params compose with it), so a "Featured" hero section is now
 
-built yet.
+possible. Until an admin features at least one novel it returns an empty
+
+list — the UI should hide the section in that case.
 
 3. **No "my novels" for writers** — a writer has no endpoint listing the
 

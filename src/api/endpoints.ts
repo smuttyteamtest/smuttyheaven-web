@@ -60,6 +60,8 @@ export interface NovelsQuery {
   search?: string;
   sort?: NovelSort;
   genre?: string;
+  /** true → only admin-curated featured novels (homepage hero) */
+  featured?: boolean;
 }
 
 export function fetchNovels(query: NovelsQuery = {}): Promise<NovelsResponse> {
