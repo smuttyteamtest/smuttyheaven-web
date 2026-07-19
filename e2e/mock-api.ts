@@ -24,6 +24,7 @@ interface MockNovel {
   description: string;
   genres: string[];
   featured: boolean;
+  status: "ongoing" | "completed" | "hiatus";
   chapters: MockChapter[];
 }
 
@@ -37,6 +38,7 @@ export const NOVELS: MockNovel[] = [
     description: "<p>Starting over once more, he has entered this game world.</p>",
     genres: ["fantasy", "action"],
     featured: true,
+    status: "ongoing",
     chapters: [
       {
         id: 334646,
@@ -76,6 +78,7 @@ export const NOVELS: MockNovel[] = [
     description: "<p>A genius doctor wakes in another world.</p>",
     genres: ["action", "romance"],
     featured: false,
+    status: "completed",
     chapters: [
       {
         id: 400001,
@@ -102,6 +105,7 @@ export const NOVELS: MockNovel[] = [
     description: "<p>The weakest hunter of all mankind.</p>",
     genres: ["action", "fantasy"],
     featured: false,
+    status: "completed",
     chapters: [
       {
         id: 500001,
@@ -128,6 +132,7 @@ export const NOVELS: MockNovel[] = [
     description: "<p>Fog, steam and machinery.</p>",
     genres: ["fantasy"],
     featured: false,
+    status: "hiatus",
     chapters: [
       {
         id: 600001,
@@ -180,6 +185,7 @@ const listItem = (n: MockNovel) => ({
   slug: n.slug,
   cover: n.cover,
   date: n.date,
+  status: n.status,
 });
 
 export class MockApi {
@@ -248,6 +254,10 @@ export class MockApi {
         novels = novels.filter((n) => n.featured);
       const genre = url.searchParams.get("genre");
       if (genre) novels = novels.filter((n) => n.genres.includes(genre));
+      // Lenient, like the real API: unknown status values are ignored.
+      const status = url.searchParams.get("status");
+      if (status && ["ongoing", "completed", "hiatus"].includes(status))
+        novels = novels.filter((n) => n.status === status);
 
       const sort = url.searchParams.get("sort") ?? "latest";
       if (sort === "popular")

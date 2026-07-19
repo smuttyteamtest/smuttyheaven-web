@@ -6,7 +6,11 @@ export type UserStatus = "active" | "suspended";
 export type ContributorRole = "writer" | "translator";
 export type ListType = "saved" | "favourite" | "archived";
 export type NovelSort = "latest" | "title" | "popular";
+// WordPress post status — the authoring/moderation lifecycle (publish/draft/trash).
 export type NovelStatus = "publish" | "draft" | "trash";
+// Story completion status — a separate axis from NovelStatus, shown to readers
+// and filterable via GET /api/novels?status=… (null = unknown, render no badge).
+export type CompletionStatus = "ongoing" | "completed" | "hiatus" | null;
 
 // ── Shared ───────────────────────────────────────────────────────────────
 export interface ApiErrorBody {
@@ -45,6 +49,7 @@ export interface Novel {
   slug: string;
   cover: string | null; // full image URL or null — always render a fallback
   date: string;
+  status: CompletionStatus; // completion state; null when unknown
 }
 
 export interface NovelDetail extends Novel {

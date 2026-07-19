@@ -22,6 +22,9 @@ export default function NavBar() {
           <NavLink to="/browse" className={linkClass}>
             All novels
           </NavLink>
+          <NavLink to="/completed" className={linkClass}>
+            Completed
+          </NavLink>
           {user && (
             <NavLink to="/library" className={linkClass}>
               My Library

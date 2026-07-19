@@ -6,9 +6,20 @@ interface GenreChipsProps {
   onSelect: (slug: string | undefined) => void;
   /** show only the top N genres (they arrive sorted by count) */
   max?: number;
+  /**
+   * Show the per-genre count. Off for filtered listings (e.g. Completed),
+   * where /api/genres still reports whole-catalog counts — a wrong number is
+   * worse than none. Filtering by genre still composes with the filter.
+   */
+  showCounts?: boolean;
 }
 
-export default function GenreChips({ active, onSelect, max }: GenreChipsProps) {
+export default function GenreChips({
+  active,
+  onSelect,
+  max,
+  showCounts = true,
+}: GenreChipsProps) {
   const { data: genres, loading } = useAsync(() => fetchGenres(), []);
 
   if (loading || !genres) {
@@ -38,7 +49,9 @@ export default function GenreChips({ active, onSelect, max }: GenreChipsProps) {
           onClick={() => onSelect(genre.slug)}
         >
           {genre.name}
-          <span className="text-tiny text-tertiary">{genre.count}</span>
+          {showCounts && (
+            <span className="text-tiny text-tertiary">{genre.count}</span>
+          )}
         </button>
       ))}
     </div>

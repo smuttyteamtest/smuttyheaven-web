@@ -5,6 +5,7 @@ import type {
   AdminUsersResponse,
   AuthResponse,
   Chapter,
+  CompletionStatus,
   ContributorGrant,
   ContributorRole,
   CreatedChapter,
@@ -62,6 +63,8 @@ export interface NovelsQuery {
   genre?: string;
   /** true → only admin-curated featured novels (homepage hero) */
   featured?: boolean;
+  /** filter by completion state, e.g. "completed" (omit for all published) */
+  status?: NonNullable<CompletionStatus>;
 }
 
 export function fetchNovels(query: NovelsQuery = {}): Promise<NovelsResponse> {

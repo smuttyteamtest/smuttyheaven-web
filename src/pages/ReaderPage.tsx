@@ -12,7 +12,6 @@ import SafeHtml from "../components/SafeHtml";
 import { SkeletonLines } from "../components/Skeletons";
 import { formatChapterHtml, novelPath, readerPath } from "../lib/format";
 import { useToast } from "../components/Toasts";
-import { novelPath, readerPath } from "../lib/format";
 
 const FONT_KEY = "novvels_reader_font";
 const FONT_SIZES = [16, 18, 20, 22, 24];

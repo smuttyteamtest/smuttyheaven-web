@@ -36,7 +36,7 @@ test.describe("smoke flow", () => {
     await expect(forYouRail(page)).toHaveCount(0);
 
     // ── 2. Browse and search (debounced title search) ────────────────────
-    await page.getByRole("link", { name: "Browse" }).click();
+    await page.getByRole("link", { name: "All novels" }).click();
     await expect(page.getByText(/4 novels/)).toBeVisible();
     await page
       .getByLabel("Search novels by title")
@@ -202,6 +202,29 @@ test.describe("smoke flow", () => {
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem("novvels_token")))
       .toBeNull();
+  });
+
+  test("Completed tab lists only completed novels", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("link", { name: "Completed" }).click();
+
+    await expect(page).toHaveURL(/\/completed$/);
+    await expect(
+      page.getByRole("heading", { name: "Completed novels" }),
+    ).toBeVisible();
+
+    // The mock has exactly two completed novels; the ongoing/hiatus titles
+    // must be filtered out server-side.
+    await expect(page.getByText(/^2 novels$/)).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Godly Empress Doctor/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Solo Leveling/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(NOVEL_TITLE) }),
+    ).toHaveCount(0);
   });
 });
 

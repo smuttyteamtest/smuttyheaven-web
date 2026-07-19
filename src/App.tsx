@@ -6,6 +6,7 @@ import { ADMIN_ROLES, STUDIO_ROLES } from "./lib/roles";
 import AccountPage from "./pages/AccountPage";
 import AdminPage from "./pages/AdminPage";
 import BrowsePage from "./pages/BrowsePage";
+import CompletedPage from "./pages/CompletedPage";
 import HomePage from "./pages/HomePage";
 import LibraryPage from "./pages/LibraryPage";
 import LoginPage from "./pages/LoginPage";
@@ -28,6 +29,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/browse" element={<BrowsePage />} />
+          <Route path="/completed" element={<CompletedPage />} />
           <Route path="/novel/:novelId/read/:chapterId" element={<ReaderPage />} />
           <Route path="/novel/:id/:slug?" element={<NovelPage />} />
           <Route path="/login" element={<LoginPage />} />
