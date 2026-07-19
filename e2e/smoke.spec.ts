@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { devices, expect, test, type Page } from "@playwright/test";
 import { API_ORIGIN, MockApi } from "./mock-api";
 
 // Mirrors the frontend_handoff.md §9 smoke flow as a UI journey:
@@ -23,6 +23,7 @@ test.describe("smoke flow", () => {
   }) => {
     // ── 1. Home (logged out): featured hero + catalog rails ──────────────
     await page.goto("/");
+    await expect(page).toHaveTitle("Novvels — Read web novels");
     await expect(
       page.getByRole("heading", { name: /Explore worlds/ }),
     ).toBeVisible();
@@ -47,6 +48,8 @@ test.describe("smoke flow", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: NOVEL_TITLE }),
     ).toBeVisible();
+    // Per-page title (issue #7)
+    await expect(page).toHaveTitle(`${NOVEL_TITLE} — Novvels`);
     await expect(page.getByText("3 chapters · added")).toBeVisible();
     const chapterRows = page.locator("ol.chapter-list li");
     await expect(chapterRows).toHaveCount(3);
@@ -61,6 +64,16 @@ test.describe("smoke flow", () => {
     await expect(
       page.getByText("Shi Feng opened his eyes to a world he had left ten years ago."),
     ).toBeVisible();
+    await expect(page.getByText("1 / 3")).toBeVisible();
+    await expect(page).toHaveTitle(
+      `Chapter 1 - Starting Over · ${NOVEL_TITLE} — Novvels`,
+    );
+
+    // Arrow keys page between chapters (issue #7 a11y). Anonymous, so this
+    // writes no progress and doesn't disturb the logged-in steps below.
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByText("2 / 3")).toBeVisible();
+    await page.keyboard.press("ArrowLeft");
     await expect(page.getByText("1 / 3")).toBeVisible();
 
     // ── 5. Register ──────────────────────────────────────────────────────
@@ -156,6 +169,12 @@ test.describe("smoke flow", () => {
     await page.getByLabel("Password").fill("smoke-pass-2!");
     await page.getByRole("button", { name: "Sign up" }).click();
     await expect(page.locator("header").getByText("fe_smoke_2")).toBeVisible();
+    // Let the home rails render before rerouting to 401s — the header updates
+    // before the mount fetches are issued, and a late rail request hitting
+    // the 401 route would log the session out before the step below.
+    await expect(
+      forYouRail(page).getByText("Popular right now").first(),
+    ).toBeVisible();
 
     // Simulate token expiry server-side, then hit a protected page
     await page.unroute(`${API_ORIGIN}/api/**`);
@@ -183,5 +202,55 @@ test.describe("smoke flow", () => {
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem("novvels_token")))
       .toBeNull();
+  });
+});
+
+// Issue #7 reader niceties are touch-only (tap zones) or easiest to observe
+// on a small viewport (scroll memory), so this suite runs as a phone.
+test.describe("reader on mobile (issue #7)", () => {
+  // defaultBrowserType can't change inside a describe group — drop it and
+  // keep the rest of the phone profile (viewport, touch, UA).
+  const { defaultBrowserType: _browser, ...pixel5 } = devices["Pixel 5"];
+  test.use(pixel5);
+
+  test.beforeEach(async ({ page }) => {
+    await new MockApi().install(page);
+  });
+
+  test("remembers scroll position per chapter and pages via edge tap zones", async ({
+    page,
+  }) => {
+    await page.goto("/novel/8757/read/334646");
+    await expect(page.getByText("1 / 3")).toBeVisible();
+
+    // Read deep into the chapter (content is padded tall in the mock)…
+    await page.waitForFunction(
+      () => document.body.scrollHeight > window.innerHeight * 2,
+    );
+    await page.evaluate(() => window.scrollTo({ top: 900 }));
+    await expect
+      .poll(() =>
+        page.evaluate(() =>
+          Number(sessionStorage.getItem("novvels_scroll_334646")),
+        ),
+      )
+      .toBeGreaterThan(800);
+
+    // …detour to the novel page and come back: position is restored.
+    // dispatchEvent, not click(): Playwright's actionability pass scrolls the
+    // sticky back-link's static position into view first, and the reader
+    // would faithfully record that scroll as the new position.
+    await page.getByLabel("Back to novel").dispatchEvent("click");
+    await page.getByRole("link", { name: /Start reading/ }).click();
+    await expect(page.getByText("1 / 3")).toBeVisible();
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY))
+      .toBeGreaterThan(800);
+
+    // Edge tap zones page next/prev without the buttons.
+    await page.locator(".reader-tapzone-next").tap();
+    await expect(page.getByText("2 / 3")).toBeVisible();
+    await page.locator(".reader-tapzone-prev").tap();
+    await expect(page.getByText("1 / 3")).toBeVisible();
   });
 });

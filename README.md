@@ -93,7 +93,28 @@ Phase 2 notes:
   are write-only in the API (no list/revoke yet).
 
 Not yet built (tracked as GitHub issues): features blocked on API gaps
-(covers in the catalog, featured rail, account settings — see handoff §8).
+(account settings, genre assignment for new novels — see handoff §8).
+
+## Polish (issue #7)
+
+- **Per-page titles & meta** — `usePageMeta` sets `document.title`,
+  description, and `og:*` tags per page (novel title, chapter · novel in the
+  reader). No SSR/prerender — the decision and trade-off are in
+  [DEPLOY.md](./DEPLOY.md).
+- **Toasts** (`src/components/Toasts.tsx`) — background failures surface as
+  dismissible, auto-expiring toasts (progress save, list toggles, session
+  expiry) in an `aria-live` region. Foreground forms keep inline errors.
+- **Accessibility** — global `:focus-visible` ring, skip-to-content link,
+  arrow-key prev/next in the reader, `prefers-reduced-motion` support, and a
+  contrast pass: every text/background pair now meets DESIGN.md rule 10
+  (≥4.5:1); the few token deviations from DESIGN.md are commented in
+  `tokens.css`/`app.css`.
+- **Reader niceties** — per-chapter scroll position memory (sessionStorage),
+  invisible edge tap zones for page turns on touch screens.
+- **Deploy** — `netlify.toml` + `public/_redirects` (Netlify) and
+  `vercel.json` (Vercel) with SPA fallback and asset caching; see
+  [DEPLOY.md](./DEPLOY.md) for `VITE_API_URL` per environment and the API
+  HTTPS/CORS requirements.
 
 ## Project layout
 
@@ -118,8 +139,9 @@ src/
 - **All migrated HTML is sanitized** (DOMPurify, iframes stripped) before
   rendering — never `dangerouslySetInnerHTML` raw API content.
 - **Chapter order is `index`**, never parsed from names.
-- **Covers**: the public catalog has none; `Cover` renders a deterministic
-  gradient placeholder and falls back on broken image URLs.
+- **Covers**: `cover` can be `null` and URLs are hot-linked to the old
+  WordPress domain; `Cover` renders a deterministic gradient placeholder and
+  falls back on broken image URLs.
 - **Search is debounced** (400 ms) — the API has no rate limiting and talks to
   a live remote DB.
 - The API is slow-ish (0.5–2 s, remote Azure MySQL) — every fetch has a

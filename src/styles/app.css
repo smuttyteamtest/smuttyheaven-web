@@ -59,6 +59,41 @@ img { max-width: 100%; }
 .text-secondary { color: var(--content-secondary); }
 .text-tertiary { color: var(--content-tertiary); }
 
+/* Keyboard focus is always visible (a11y). .input keeps its own focus style
+   (nebula border + glow), so the ring is suppressed there. */
+:focus-visible {
+  outline: 2px solid var(--nebula);
+  outline-offset: 2px;
+}
+.input:focus-visible,
+.app-main:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--star);
+  color: var(--content-on-star);
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 0 0 var(--radius-md) 0;
+}
+.skip-link:focus {
+  left: 0;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -117,7 +152,8 @@ img { max-width: 100%; }
 
 .btn-destructive {
   background: var(--error);
-  color: #ffffff;
+  /* DESIGN.md says white, but white on --error is 2.8:1 — rule 10 wins. */
+  color: var(--deep-space);
 }
 .btn-destructive:hover {
   filter: brightness(1.08);
@@ -193,7 +229,7 @@ img { max-width: 100%; }
   color: var(--content-tertiary);
   margin-top: 4px;
 }
-.field-help.is-error { color: var(--error); }
+.field-help.is-error { color: var(--error-text); }
 
 select.input {
   appearance: none;
@@ -228,7 +264,9 @@ select.input {
 }
 .chip.is-active {
   background: var(--nebula);
-  color: #ffffff;
+  /* DESIGN.md says white, but white on --nebula is 2.7:1 — rule 10 wins. */
+  color: var(--deep-space);
+  font-weight: 600;
   border-color: var(--nebula);
   box-shadow: var(--glow-nebula-sm);
 }
@@ -243,8 +281,10 @@ select.input {
 }
 .status-chip.is-success { background: rgba(74, 222, 128, 0.2); color: var(--success); }
 .status-chip.is-pending { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
-.status-chip.is-missed { background: rgba(248, 113, 113, 0.2); color: var(--error); }
-.status-chip.is-locked { background: rgba(139, 130, 195, 0.2); color: #8b82c3; }
+/* Missed/locked text lightened over DESIGN.md — the spec colors sit under
+   4.5:1 on the tinted fills (rule 10). */
+.status-chip.is-missed { background: rgba(248, 113, 113, 0.2); color: var(--error-text); }
+.status-chip.is-locked { background: rgba(139, 130, 195, 0.2); color: var(--content-secondary); }
 
 .chip-row {
   display: flex;
@@ -802,7 +842,7 @@ a.featured-card:hover {
 .form-error {
   background: rgba(248, 113, 113, 0.15);
   border: 1px solid var(--error);
-  color: var(--error);
+  color: var(--error-text);
   border-radius: var(--radius-md);
   padding: 10px 16px;
   font-size: 14px;
@@ -905,7 +945,7 @@ textarea.input {
   color: var(--content-tertiary);
   margin-top: 4px;
 }
-.byte-meter.is-over { color: var(--error); }
+.byte-meter.is-over { color: var(--error-text); }
 
 /* ── Studio ────────────────────────────────────────────────────────────── */
 
@@ -1237,6 +1277,95 @@ textarea.input {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ── Toasts ────────────────────────────────────────────────────────────── */
+
+.toast-stack {
+  position: fixed;
+  bottom: var(--sp-4);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  width: min(440px, calc(100vw - 2 * var(--sp-3)));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: var(--surface-overlay);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 10px 8px 10px 16px;
+  font-size: 14px;
+  color: var(--content-primary);
+  box-shadow: var(--glow-nebula-sm);
+  pointer-events: auto;
+  animation: toast-in 0.2s ease;
+}
+.toast-error { border-color: var(--error); box-shadow: 0 0 8px rgba(248, 113, 113, 0.3); }
+.toast-success { border-color: var(--success); }
+
+.toast-message { flex: 1; }
+
+.toast-close {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-radius: var(--radius-pill);
+  color: var(--content-secondary);
+  font-size: 14px;
+  line-height: 1;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+.toast-close:hover {
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--content-primary);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ── Reader tap zones (mobile) ─────────────────────────────────────────── */
+/* Invisible page-turn strips along the screen edges on touch devices. They
+   mirror the Prev/Next buttons, so they're aria-hidden and out of tab order. */
+
+.reader-tapzones {
+  display: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .reader-tapzones {
+    display: block;
+  }
+  .reader-tapzone {
+    position: fixed;
+    top: 56px; /* below the sticky reader bar */
+    bottom: 0;
+    width: 15vw;
+    z-index: 30;
+    background: none;
+    border: none;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Let taps fall through to whatever is underneath at the chapter ends. */
+  .reader-tapzone:disabled {
+    pointer-events: none;
+  }
+  .reader-tapzone-prev { left: 0; }
+  .reader-tapzone-next { right: 0; }
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────── */

@@ -43,7 +43,13 @@ export const NOVELS: MockNovel[] = [
         name: "Chapter 1 - Starting Over",
         slug: "chapter-1-starting-over",
         index: 0,
-        content: "<p>Shi Feng opened his eyes to a world he had left ten years ago.</p>",
+        // First paragraph is asserted on by the smoke flow; the padding makes
+        // the chapter tall enough to scroll for the scroll-memory test.
+        content:
+          "<p>Shi Feng opened his eyes to a world he had left ten years ago.</p>" +
+          "<p>The starting village of White River City spread out around him.</p>".repeat(
+            40,
+          ),
       },
       {
         id: 334647,

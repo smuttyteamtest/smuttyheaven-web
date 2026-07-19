@@ -15,6 +15,7 @@ import {
 } from "../api/client";
 import { fetchMe, login as apiLogin, register as apiRegister } from "../api/endpoints";
 import type { PublicUser } from "../api/types";
+import { useOptionalToast } from "../components/Toasts";
 
 interface AuthContextValue {
   user: PublicUser | null;
@@ -35,12 +36,17 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
   const [booting, setBooting] = useState<boolean>(() => getToken() !== null);
+  const toast = useOptionalToast();
 
-  // Any 401 anywhere in the app clears the session.
+  // Any 401 anywhere in the app clears the session. Only a *live* session
+  // gets the toast — a stale token found on boot just logs out quietly.
   useEffect(() => {
-    setUnauthorizedHandler(() => setUser(null));
+    setUnauthorizedHandler(() => {
+      if (user) toast?.("Your session expired — please log in again.", "info");
+      setUser(null);
+    });
     return () => setUnauthorizedHandler(null);
-  }, []);
+  }, [user, toast]);
 
   // Restore session on boot; /api/auth/me also refreshes the role, which can
   // be stale inside the stored JWT.

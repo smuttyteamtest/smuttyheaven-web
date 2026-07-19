@@ -5,6 +5,7 @@ import AdminNovelsPanel from "../components/AdminNovelsPanel";
 import AdminUsersPanel from "../components/AdminUsersPanel";
 import { SkeletonLines } from "../components/Skeletons";
 import { useAsync } from "../hooks/useAsync";
+import { usePageMeta } from "../hooks/usePageMeta";
 import { formatNumber } from "../lib/format";
 
 type Tab = "overview" | "users" | "novels" | "contributors";
@@ -16,6 +17,7 @@ const TABS: { key: Tab; label: string }[] = [
 ];
 
 export default function AdminPage() {
+  usePageMeta({ title: "Admin" });
   const [params, setParams] = useSearchParams();
   const tabParam = params.get("tab") as Tab | null;
   const tab: Tab = TABS.some((t) => t.key === tabParam)
