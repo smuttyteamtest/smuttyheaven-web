@@ -16,11 +16,11 @@ export default function NavBar() {
           <span className="logo-star" aria-hidden>
             ✦
           </span>
-          Novvels
+          SmuttyHeaven
         </Link>
         <nav className="navbar-links" aria-label="Main">
           <NavLink to="/browse" className={linkClass}>
-            Browse
+            All novels
           </NavLink>
           {user && (
             <NavLink to="/library" className={linkClass}>

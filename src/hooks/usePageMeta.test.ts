@@ -8,13 +8,13 @@ const meta = (selector: string) =>
 describe("usePageMeta", () => {
   it("sets the title with the site suffix and mirrors it into og:title", () => {
     renderHook(() => usePageMeta({ title: "Solo Leveling" }));
-    expect(document.title).toBe("Solo Leveling — Novvels");
-    expect(meta('property="og:title"')).toBe("Solo Leveling — Novvels");
+    expect(document.title).toBe("Solo Leveling — SmuttyHeaven");
+    expect(meta('property="og:title"')).toBe("Solo Leveling — SmuttyHeaven");
   });
 
   it("falls back to the site defaults without arguments", () => {
     renderHook(() => usePageMeta());
-    expect(document.title).toBe("Novvels — Read web novels");
+    expect(document.title).toBe("SmuttyHeaven — Read web novels");
     expect(meta('name="description"')).toContain("read web novels");
   });
 
@@ -31,6 +31,6 @@ describe("usePageMeta", () => {
       document.head.querySelectorAll('meta[name="description"]'),
     ).toHaveLength(1);
     expect(meta('name="description"')).toBe("Two");
-    expect(document.title).toBe("Second — Novvels");
+    expect(document.title).toBe("Second — SmuttyHeaven");
   });
 });

@@ -77,7 +77,7 @@ export default function App() {
       </main>
       <footer className="footer">
         <div className="container">
-          Novvels — read among the stars <span aria-hidden>✦</span>
+          SmuttyHeaven — read among the stars <span aria-hidden>✦</span>
         </div>
       </footer>
     </>

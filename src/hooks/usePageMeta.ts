@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 
-const SITE = "Novvels";
-const DEFAULT_TITLE = "Novvels — Read web novels";
+const SITE = "SmuttyHeaven";
+const DEFAULT_TITLE = "SmuttyHeaven — Read web novels";
 // Keep in sync with the defaults in index.html.
 const DEFAULT_DESCRIPTION =
-  "Novvels — read web novels. Discover, read and collect hundreds of novels.";
+  "SmuttyHeaven — read web novels. Discover, read and collect hundreds of novels.";
 
 function setMeta(attr: "name" | "property", key: string, content: string) {
   let tag = document.head.querySelector<HTMLMetaElement>(
@@ -19,7 +19,7 @@ function setMeta(attr: "name" | "property", key: string, content: string) {
 }
 
 export interface PageMeta {
-  /** Rendered as "<title> — Novvels". Omit for the site default. */
+  /** Rendered as "<title> — SmuttyHeaven". Omit for the site default. */
   title?: string;
   /** Plain text only — run HTML through htmlToText first. */
   description?: string;

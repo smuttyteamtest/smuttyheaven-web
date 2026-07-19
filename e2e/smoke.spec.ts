@@ -23,7 +23,7 @@ test.describe("smoke flow", () => {
   }) => {
     // ── 1. Home (logged out): featured hero + catalog rails ──────────────
     await page.goto("/");
-    await expect(page).toHaveTitle("Novvels — Read web novels");
+    await expect(page).toHaveTitle("SmuttyHeaven — Read web novels");
     await expect(
       page.getByRole("heading", { name: /Explore worlds/ }),
     ).toBeVisible();
@@ -49,7 +49,7 @@ test.describe("smoke flow", () => {
       page.getByRole("heading", { level: 1, name: NOVEL_TITLE }),
     ).toBeVisible();
     // Per-page title (issue #7)
-    await expect(page).toHaveTitle(`${NOVEL_TITLE} — Novvels`);
+    await expect(page).toHaveTitle(`${NOVEL_TITLE} — SmuttyHeaven`);
     await expect(page.getByText("3 chapters · added")).toBeVisible();
     const chapterRows = page.locator("ol.chapter-list li");
     await expect(chapterRows).toHaveCount(3);
@@ -66,7 +66,7 @@ test.describe("smoke flow", () => {
     ).toBeVisible();
     await expect(page.getByText("1 / 3")).toBeVisible();
     await expect(page).toHaveTitle(
-      `Chapter 1 - Starting Over · ${NOVEL_TITLE} — Novvels`,
+      `Chapter 1 - Starting Over · ${NOVEL_TITLE} — SmuttyHeaven`,
     );
 
     // Arrow keys page between chapters (issue #7 a11y). Anonymous, so this

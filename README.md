@@ -1,6 +1,6 @@
-# Novvels — Web Frontend
+# SmuttyHeaven — Web Frontend
 
-The reader-facing web UI for **Novvels**, a web-novel platform (~462 novels,
+The reader-facing web UI for **SmuttyHeaven**, a web-novel platform (~462 novels,
 ~321k chapters). React + TypeScript + Vite, styled with the **StarChart**
 design system (see [DESIGN.md](./DESIGN.md)).
 

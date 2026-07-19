@@ -58,7 +58,7 @@ export default function RegisterPage() {
   return (
     <div className="auth-page">
       <div className="card auth-card">
-        <h2>Join Novvels</h2>
+        <h2>Join SmuttyHeaven</h2>
         {error && <div className="form-error">{error}</div>}
         <form onSubmit={onSubmit} noValidate>
           <div className="field">

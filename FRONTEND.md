@@ -1,4 +1,4 @@
-# Novvels — Frontend Guide
+# SmuttyHeaven — Frontend Guide
 
 > The big-picture document for the frontend team. Read this first: it explains
 > **what kind of website we're building**, who uses it, what data exists, and
@@ -7,9 +7,9 @@
 
 ---
 
-## 1. What is Novvels?
+## 1. What is SmuttyHeaven?
 
-**Novvels is a web-novel reading platform** — think of sites like Webnovel,
+**SmuttyHeaven is a web-novel reading platform** — think of sites like Webnovel,
 Royal Road, or the original WordPress "Madara"-theme novel sites. Users come to:
 
 1. **Discover** novels — browse, search, filter by genre, see what's popular

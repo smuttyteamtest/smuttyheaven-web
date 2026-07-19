@@ -70,7 +70,7 @@ export default function LoginPage() {
           </button>
         </form>
         <p className="auth-switch">
-          New to Novvels? <Link to="/register">Create an account</Link>
+          New to SmuttyHeaven? <Link to="/register">Create an account</Link>
         </p>
       </div>
     </div>

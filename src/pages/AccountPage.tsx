@@ -136,7 +136,7 @@ export default function AccountPage() {
           ))}
         </ul>
         <div className="note-banner">
-          These aren&apos;t available yet — the Novvels API doesn&apos;t support
+          These aren&apos;t available yet — the SmuttyHeaven API doesn&apos;t support
           editing your profile, changing passwords, or deleting accounts. They
           will light up here once the backend ships those endpoints.
         </div>
