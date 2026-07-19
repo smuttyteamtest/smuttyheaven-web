@@ -43,6 +43,7 @@ export interface Novel {
   id: number;
   title: string;
   slug: string;
+  cover: string | null; // full image URL or null — always render a fallback
   date: string;
 }
 

@@ -43,11 +43,11 @@ export default function HomePage() {
   );
 
   const popularCards: NovelCardData[] | undefined = popular.data?.novels.map(
-    (n) => ({ id: n.id, title: n.title, href: novelPath(n.id, n.slug) }),
+    (n) => ({ id: n.id, title: n.title, cover: n.cover, href: novelPath(n.id, n.slug) }),
   );
 
   const latestCards: NovelCardData[] | undefined = latest.data?.novels.map(
-    (n) => ({ id: n.id, title: n.title, href: novelPath(n.id, n.slug) }),
+    (n) => ({ id: n.id, title: n.title, cover: n.cover, href: novelPath(n.id, n.slug) }),
   );
 
   return (

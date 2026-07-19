@@ -401,15 +401,16 @@ defaults):
 
       "slug": "reincarnation-of-the-strongest-sword-god",
 
+      "cover": "https://…/wp-content/uploads/2020/07/example.jpg",
+
       "date": "2020-07-15T05:28:04.000Z"
     }
   ]
 }
 ```
 
-⚠️ **No `cover` and no description in this response** — see
-
-[Known gaps](#8-known-gaps).
+`cover` is the featured-image URL or `null` (added 2026-07-19; formerly
+known-gap #1). No description in this response — that's detail-only.
 
 #### `GET /api/novels/:id` 🔓
 
@@ -426,6 +427,8 @@ defaults):
   "slug": "reincarnation-of-the-strongest-sword-god",
 
   "description": "<p>Starting over once more…</p>",
+
+  "cover": "https://…/wp-content/uploads/2020/07/example.jpg",
 
   "date": "2020-07-15T05:28:04.000Z",
 
@@ -465,9 +468,9 @@ Errors: `400` bad id, `404` unknown/unpublished novel.
 
 `200 { "novels": [ …up to 10 Novel list items… ] }` — ranked by number of
 
-shared genres, no pagination, same shape as the `/api/novels` items (no
+shared genres, no pagination, same shape as the `/api/novels` items
 
-cover). `404` if the base novel doesn't exist.
+(including `cover`). `404` if the base novel doesn't exist.
 
 ### 4.4 Genres
 
@@ -918,6 +921,9 @@ export interface Novel {
   id: number;
   title: string;
   slug: string;
+
+  cover: string | null; // featured-image URL; always render a fallback
+
   date: string;
 
   description?: string; // HTML — sanitize
@@ -1176,15 +1182,15 @@ Things the UI might naturally want that the API **does not offer yet** — plan
 
 around them (placeholder, hide the feature, or request a backend change):
 
-1. **No cover images on the public catalog** — `GET /api/novels`,
+1. ~~**No cover images on the public catalog**~~ — **Resolved 2026-07-19:**
 
-`GET /api/novels/:id`, and `/related` don't return `cover`. Covers exist
+`GET /api/novels`, `GET /api/novels/:id`, and `/related` now return
 
-only on lists / history / recommendations responses. Browse grids
+`cover` (featured-image URL or `null`), same as lists / history /
 
-currently need a title-only card or a placeholder image. \*(Most impactful
+recommendations. URLs are still hot-linked to the old WordPress domain —
 
-gap — ask the backend to add `cover` to the catalog responses.)\*
+keep the placeholder + `onerror` fallback.
 
 2. **Featured novels can be set but not read** — admins can flag novels
 

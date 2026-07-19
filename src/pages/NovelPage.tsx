@@ -68,6 +68,7 @@ export default function NovelPage() {
   const relatedCards = related.data?.novels.map((n) => ({
     id: n.id,
     title: n.title,
+    cover: n.cover,
     href: novelPath(n.id, n.slug),
   }));
 
@@ -76,7 +77,7 @@ export default function NovelPage() {
       <div className="novel-detail-head">
         <div>
           {data ? (
-            <Cover src={null} title={data.title} seed={data.id} />
+            <Cover src={data.cover} title={data.title} seed={data.id} />
           ) : (
             <div className="skeleton skeleton-cover" />
           )}

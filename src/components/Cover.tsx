@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-// Nebula-family gradient pairs for novels without a cover image (the public
-// catalog returns no covers at all — see frontend_handoff.md §8).
+// Nebula-family gradient pairs for novels whose cover is null or fails to
+// load (cover URLs are hot-linked to the old WordPress domain and break).
 const GRADIENTS = [
   ["#4c3a9e", "#7c5ce0"],
   ["#3b3286", "#a78bfa"],

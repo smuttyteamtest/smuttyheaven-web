@@ -117,6 +117,7 @@ export default function BrowsePage() {
                 item={{
                   id: novel.id,
                   title: novel.title,
+                  cover: novel.cover,
                   href: novelPath(novel.id, novel.slug),
                 }}
               />

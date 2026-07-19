@@ -195,8 +195,8 @@ Client-side form rules (mirror of the server's validation):
 
 | Method | Path                      | Notes |
 |--------|---------------------------|-------|
-| GET 🔓 | `/api/novels`             | Query: `?page`, `?limit`, `?search` (title substring), `?sort=latest\|title\|popular`, `?genre=<slug>`. → `{ page, limit, total, novels }`. |
-| GET 🔓 | `/api/novels/:id`         | One novel **+ full chapter list** (sorted by `index`). → `{ id, title, slug, date, description, chapters: [{ id, name, slug, index, date }] }`. |
+| GET 🔓 | `/api/novels`             | Query: `?page`, `?limit`, `?search` (title substring), `?sort=latest\|title\|popular`, `?genre=<slug>`. → `{ page, limit, total, novels: [{ id, title, slug, cover, date }] }`. |
+| GET 🔓 | `/api/novels/:id`         | One novel **+ full chapter list** (sorted by `index`). → `{ id, title, slug, cover, date, description, chapters: [{ id, name, slug, index, date }] }`. |
 | GET 🔓 | `/api/novels/:id/related` | Up to 10 novels sharing the most genres. → `{ novels }`. |
 | GET 🔓 | `/api/chapters/:id`       | The reader payload. → `{ id, name, content }` — `content` is HTML (sanitize!). |
 | GET 🔓 | `/api/genres`             | All genres with live published-novel counts, most-used first. → `{ genres: [{ id, name, slug, count }] }`. |
