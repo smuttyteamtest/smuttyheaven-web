@@ -757,6 +757,15 @@ a.featured-card:hover {
   padding: var(--sp-5) var(--sp-3) var(--sp-6);
   color: var(--content-primary);
   line-height: 1.8;
+  /*
+   * Migrated chapter text separates paragraphs with blank lines (\n\n), not
+   * <p> tags (verified: ~4994/5000 chapters are newline-delimited, only 5 use
+   * <p>). HTML collapses that whitespace into one wall of text, so preserve
+   * line breaks here. pre-line keeps newlines but still collapses runs of
+   * spaces and wraps normally — ideal for prose. The <p> rule below covers the
+   * rare tag-based chapters.
+   */
+  white-space: pre-line;
 }
 .reader-content p { margin: 0 0 1em; }
 .reader-content img { border-radius: var(--radius-sm); }

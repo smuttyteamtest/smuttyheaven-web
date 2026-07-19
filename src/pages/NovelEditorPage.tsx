@@ -466,7 +466,7 @@ export default function NovelEditorPage() {
                         onClick={() => setEditing(chapter)}
                       >
                         <span className="chapter-num">
-                          #{chapter.index + 1}
+                          #{chapter.index}
                         </span>
                         <span className="chapter-name">{chapter.name}</span>
                         <span className="chapter-edit-hint">
