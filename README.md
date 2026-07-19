@@ -23,6 +23,24 @@ npm run build      # type-check + production bundle into dist/
 npm run preview    # serve the production build locally
 ```
 
+## Tests
+
+```bash
+npm run test:unit    # Vitest + React Testing Library (src/**/*.test.{ts,tsx})
+npm run test:watch   # same, in watch mode
+npm run test:e2e     # Playwright smoke flow (first: npx playwright install chromium)
+```
+
+Unit tests cover the API client (401 handling, error envelope), the
+`useAsync`/`useDebounce` hooks, `ChapterList` windowing/filter/sort, the
+`Cover` fallback, and register-form validation. The E2E suite
+([e2e/smoke.spec.ts](./e2e/smoke.spec.ts)) mirrors the handoff §9 smoke flow —
+browse → open novel → read chapter → register → favourite → progress →
+history → recommendations — with **every `/api/**` request intercepted** and
+served by [e2e/mock-api.ts](./e2e/mock-api.ts). Never point the E2E suite at
+the real backend: it writes real rows to the shared Azure database. Both
+suites run in CI on every PR (`.github/workflows/ci.yml`).
+
 ## What's implemented (Phase 1 — reader experience)
 
 | Route | Page |
