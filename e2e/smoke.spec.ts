@@ -225,6 +225,35 @@ test.describe("smoke flow", () => {
     await expect(
       page.getByRole("link", { name: new RegExp(NOVEL_TITLE) }),
     ).toHaveCount(0);
+
+    // Genre chip counts are scoped to the filter: 1 of the 3 fantasy novels
+    // is completed, so the Fantasy chip reads "1" here (not the catalog's 3).
+    await expect(
+      page.getByRole("button", { name: "Fantasy 1", exact: true }),
+    ).toBeVisible();
+  });
+
+  test("Origin dropdown filters by source language", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Origin" }).click();
+    await page.getByRole("menuitem", { name: "Korean" }).click();
+
+    await expect(page).toHaveURL(/\/origin\/korean$/);
+    await expect(
+      page.getByRole("heading", { name: "Korean novels" }),
+    ).toBeVisible();
+
+    // Two Korean novels in the mock; the Chinese/Japanese titles drop out.
+    await expect(page.getByText(/^2 novels$/)).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: new RegExp(NOVEL_TITLE) }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Solo Leveling/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /Godly Empress Doctor/ }),
+    ).toHaveCount(0);
   });
 });
 

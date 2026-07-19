@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { fetchNovels } from "../api/endpoints";
-import type { CompletionStatus, NovelSort } from "../api/types";
+import type { CompletionStatus, NovelOrigin, NovelSort } from "../api/types";
 import { useAsync } from "../hooks/useAsync";
 import { useDebounce } from "../hooks/useDebounce";
 import { usePageMeta } from "../hooks/usePageMeta";
@@ -23,14 +23,21 @@ interface NovelBrowserProps {
   heading: string;
   /** Pin a completion filter, e.g. "completed"; omit for the whole catalog. */
   status?: NonNullable<CompletionStatus>;
+  /** Pin a source-language filter, e.g. "korean"; omit for all origins. */
+  origin?: NonNullable<NovelOrigin>;
 }
 
 /**
- * The searchable, sortable, genre-filterable novels grid. Powers both the
- * full catalog (/browse) and pinned-filter listings like Completed
- * (/completed) — the only difference is the pinned `status` and the heading.
+ * The searchable, sortable, genre-filterable novels grid. Powers the full
+ * catalog (/browse) and pinned-filter listings like Completed (/completed) and
+ * the origin pages (/origin/:origin) — the only difference is the pinned
+ * status/origin and the heading.
  */
-export default function NovelBrowser({ heading, status }: NovelBrowserProps) {
+export default function NovelBrowser({
+  heading,
+  status,
+  origin,
+}: NovelBrowserProps) {
   const [params, setParams] = useSearchParams();
   const genre = params.get("genre") ?? undefined;
   const sort = (params.get("sort") as NovelSort | null) ?? "latest";
@@ -88,8 +95,9 @@ export default function NovelBrowser({ heading, status }: NovelBrowserProps) {
         sort,
         genre,
         status,
+        origin,
       }),
-    [page, urlSearch, sort, genre, status],
+    [page, urlSearch, sort, genre, status, origin],
   );
 
   return (
@@ -123,9 +131,9 @@ export default function NovelBrowser({ heading, status }: NovelBrowserProps) {
       <GenreChips
         active={genre}
         onSelect={(slug) => patchParams({ genre: slug, page: undefined })}
-        // /api/genres counts the whole catalog, not this status slice — hide
-        // the numbers when a status is pinned rather than show wrong ones.
-        showCounts={!status}
+        // Scope the chip counts to this listing so they match the total above.
+        status={status}
+        origin={origin}
       />
 
       {error ? (

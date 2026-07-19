@@ -358,6 +358,65 @@ select.input {
   color: var(--content-primary);
 }
 
+/* ── Navbar dropdown (Origin) ──────────────────────────────────────────── */
+
+.navbar-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+/* The trigger is a <button> but reads as a nav link. */
+.navbar-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+}
+.navbar-dropdown-caret {
+  font-size: 15px;
+  line-height: 1;
+  opacity: 0.8;
+  /* Rotates to point up while the menu is open — the clearest open/closed cue. */
+  transition: transform 0.15s ease;
+}
+.navbar-dropdown-trigger[aria-expanded="true"] .navbar-dropdown-caret {
+  transform: rotate(180deg);
+}
+.navbar-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 60;
+  min-width: 176px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sp-1);
+  background: var(--surface-raised);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+.navbar-dropdown-item {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--content-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.navbar-dropdown-item:hover {
+  background: rgba(167, 139, 250, 0.1);
+  color: var(--content-primary);
+  text-decoration: none;
+}
+.navbar-dropdown-item.is-active {
+  background: rgba(167, 139, 250, 0.15);
+  color: var(--content-primary);
+}
+
 .navbar-auth {
   display: flex;
   align-items: center;

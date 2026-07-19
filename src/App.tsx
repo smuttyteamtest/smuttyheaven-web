@@ -8,6 +8,7 @@ import AdminPage from "./pages/AdminPage";
 import BrowsePage from "./pages/BrowsePage";
 import CompletedPage from "./pages/CompletedPage";
 import HomePage from "./pages/HomePage";
+import OriginPage from "./pages/OriginPage";
 import LibraryPage from "./pages/LibraryPage";
 import LoginPage from "./pages/LoginPage";
 import NotFoundPage from "./pages/NotFoundPage";
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/browse" element={<BrowsePage />} />
           <Route path="/completed" element={<CompletedPage />} />
+          <Route path="/origin/:origin" element={<OriginPage />} />
           <Route path="/novel/:novelId/read/:chapterId" element={<ReaderPage />} />
           <Route path="/novel/:id/:slug?" element={<NovelPage />} />
           <Route path="/login" element={<LoginPage />} />

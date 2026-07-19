@@ -1,6 +1,7 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { STUDIO_ROLES } from "../lib/roles";
+import NavOriginMenu from "./NavOriginMenu";
 
 export default function NavBar() {
   const { user, logout } = useAuth();
@@ -25,6 +26,7 @@ export default function NavBar() {
           <NavLink to="/completed" className={linkClass}>
             Completed
           </NavLink>
+          <NavOriginMenu />
           {user && (
             <NavLink to="/library" className={linkClass}>
               My Library

@@ -18,6 +18,7 @@ import type {
   ListResponse,
   ListType,
   MeResponse,
+  NovelOrigin,
   NovelDetail,
   NovelSort,
   NovelStatus,
@@ -65,6 +66,8 @@ export interface NovelsQuery {
   featured?: boolean;
   /** filter by completion state, e.g. "completed" (omit for all published) */
   status?: NonNullable<CompletionStatus>;
+  /** filter by source language, e.g. "korean" (omit for all origins) */
+  origin?: NonNullable<NovelOrigin>;
 }
 
 export function fetchNovels(query: NovelsQuery = {}): Promise<NovelsResponse> {
@@ -83,14 +86,23 @@ export function fetchChapter(id: number): Promise<Chapter> {
   return api(`/api/chapters/${id}`);
 }
 
-// Genres change rarely — cache the promise for the session.
-let genresCache: Promise<Genre[]> | null = null;
-export function fetchGenres(): Promise<Genre[]> {
-  genresCache ??= api<GenresResponse>("/api/genres").then((b) => b.genres);
-  genresCache.catch(() => {
-    genresCache = null; // let a failed fetch retry next time
-  });
-  return genresCache;
+// Genres change rarely — cache each (status, origin) scoping for the session.
+// Counts are per-filter (see /api/genres), so the cache key must include them.
+const genresCache = new Map<string, Promise<Genre[]>>();
+export function fetchGenres(
+  status?: NonNullable<CompletionStatus>,
+  origin?: NonNullable<NovelOrigin>,
+): Promise<Genre[]> {
+  const key = `${status ?? ""}|${origin ?? ""}`;
+  let cached = genresCache.get(key);
+  if (!cached) {
+    cached = api<GenresResponse>(`/api/genres${qs({ status, origin })}`).then(
+      (b) => b.genres,
+    );
+    cached.catch(() => genresCache.delete(key)); // let a failed fetch retry
+    genresCache.set(key, cached);
+  }
+  return cached;
 }
 
 // Novel detail cache — the reader re-needs the chapter array on every

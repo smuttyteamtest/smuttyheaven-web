@@ -1,4 +1,5 @@
 import { fetchGenres } from "../api/endpoints";
+import type { CompletionStatus, NovelOrigin } from "../api/types";
 import { useAsync } from "../hooks/useAsync";
 
 interface GenreChipsProps {
@@ -7,20 +8,25 @@ interface GenreChipsProps {
   /** show only the top N genres (they arrive sorted by count) */
   max?: number;
   /**
-   * Show the per-genre count. Off for filtered listings (e.g. Completed),
-   * where /api/genres still reports whole-catalog counts — a wrong number is
-   * worse than none. Filtering by genre still composes with the filter.
+   * Scope the per-genre counts to the listing's pinned filters. /api/genres
+   * composes both, so the numbers match the page (e.g. completed romance = 92,
+   * not the whole-catalog 292). Omit for the unfiltered catalog.
    */
-  showCounts?: boolean;
+  status?: NonNullable<CompletionStatus>;
+  origin?: NonNullable<NovelOrigin>;
 }
 
 export default function GenreChips({
   active,
   onSelect,
   max,
-  showCounts = true,
+  status,
+  origin,
 }: GenreChipsProps) {
-  const { data: genres, loading } = useAsync(() => fetchGenres(), []);
+  const { data: genres, loading } = useAsync(
+    () => fetchGenres(status, origin),
+    [status, origin],
+  );
 
   if (loading || !genres) {
     return (
@@ -49,9 +55,7 @@ export default function GenreChips({
           onClick={() => onSelect(genre.slug)}
         >
           {genre.name}
-          {showCounts && (
-            <span className="text-tiny text-tertiary">{genre.count}</span>
-          )}
+          <span className="text-tiny text-tertiary">{genre.count}</span>
         </button>
       ))}
     </div>

@@ -12,6 +12,17 @@ export type NovelStatus = "publish" | "draft" | "trash";
 // and filterable via GET /api/novels?status=… (null = unknown, render no badge).
 export type CompletionStatus = "ongoing" | "completed" | "hiatus" | null;
 
+// Source language of the series, filterable via GET /api/novels?origin=…
+// (null = no origin tag on the novel — 2 of the 384 published; render no badge).
+export type NovelOrigin = "korean" | "japanese" | "chinese" | null;
+
+// Clean API value → display label for the Origin menu / badges.
+export const ORIGIN_LABELS: Record<NonNullable<NovelOrigin>, string> = {
+  korean: "Korean",
+  japanese: "Japanese",
+  chinese: "Chinese",
+};
+
 // ── Shared ───────────────────────────────────────────────────────────────
 export interface ApiErrorBody {
   error: string;
@@ -50,6 +61,7 @@ export interface Novel {
   cover: string | null; // full image URL or null — always render a fallback
   date: string;
   status: CompletionStatus; // completion state; null when unknown
+  origin: NovelOrigin; // source language; null when untagged
 }
 
 export interface NovelDetail extends Novel {

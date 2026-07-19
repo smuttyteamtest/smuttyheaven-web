@@ -25,6 +25,7 @@ interface MockNovel {
   genres: string[];
   featured: boolean;
   status: "ongoing" | "completed" | "hiatus";
+  origin: "korean" | "japanese" | "chinese" | null;
   chapters: MockChapter[];
 }
 
@@ -39,6 +40,7 @@ export const NOVELS: MockNovel[] = [
     genres: ["fantasy", "action"],
     featured: true,
     status: "ongoing",
+    origin: "korean",
     chapters: [
       {
         id: 334646,
@@ -79,6 +81,7 @@ export const NOVELS: MockNovel[] = [
     genres: ["action", "romance"],
     featured: false,
     status: "completed",
+    origin: "chinese",
     chapters: [
       {
         id: 400001,
@@ -106,6 +109,7 @@ export const NOVELS: MockNovel[] = [
     genres: ["action", "fantasy"],
     featured: false,
     status: "completed",
+    origin: "korean",
     chapters: [
       {
         id: 500001,
@@ -133,6 +137,7 @@ export const NOVELS: MockNovel[] = [
     genres: ["fantasy"],
     featured: false,
     status: "hiatus",
+    origin: "japanese",
     chapters: [
       {
         id: 600001,
@@ -186,7 +191,26 @@ const listItem = (n: MockNovel) => ({
   cover: n.cover,
   date: n.date,
   status: n.status,
+  origin: n.origin,
 });
+
+const COMPLETION_STATUSES = ["ongoing", "completed", "hiatus"];
+const ORIGINS = ["korean", "japanese", "chinese"];
+
+/**
+ * The status + origin filters shared by /api/novels and /api/genres. Lenient
+ * like the real API — unknown values are ignored (no filtering).
+ */
+const byStatusAndOrigin = (novels: MockNovel[], url: URL): MockNovel[] => {
+  let out = novels;
+  const status = url.searchParams.get("status");
+  if (status && COMPLETION_STATUSES.includes(status))
+    out = out.filter((n) => n.status === status);
+  const origin = url.searchParams.get("origin");
+  if (origin && ORIGINS.includes(origin))
+    out = out.filter((n) => n.origin === origin);
+  return out;
+};
 
 export class MockApi {
   private users = new Map<string, UserState>();
@@ -237,10 +261,12 @@ export class MockApi {
     }
 
     if (path === "/api/genres") {
+      // Counts scope to the same status/origin the page is filtered on.
+      const scoped = byStatusAndOrigin(NOVELS, url);
       return json({
         genres: GENRES.map((g) => ({
           ...g,
-          count: NOVELS.filter((n) => n.genres.includes(g.slug)).length,
+          count: scoped.filter((n) => n.genres.includes(g.slug)).length,
         })),
       });
     }
@@ -254,10 +280,7 @@ export class MockApi {
         novels = novels.filter((n) => n.featured);
       const genre = url.searchParams.get("genre");
       if (genre) novels = novels.filter((n) => n.genres.includes(genre));
-      // Lenient, like the real API: unknown status values are ignored.
-      const status = url.searchParams.get("status");
-      if (status && ["ongoing", "completed", "hiatus"].includes(status))
-        novels = novels.filter((n) => n.status === status);
+      novels = byStatusAndOrigin(novels, url);
 
       const sort = url.searchParams.get("sort") ?? "latest";
       if (sort === "popular")
