@@ -3,6 +3,7 @@ import NavBar from "./components/NavBar";
 import RequireAuth from "./components/RequireAuth";
 import RequireRole from "./components/RequireRole";
 import { ADMIN_ROLES, STUDIO_ROLES } from "./lib/roles";
+import AccountPage from "./pages/AccountPage";
 import AdminPage from "./pages/AdminPage";
 import BrowsePage from "./pages/BrowsePage";
 import HomePage from "./pages/HomePage";
@@ -36,6 +37,14 @@ export default function App() {
             element={
               <RequireAuth>
                 <LibraryPage />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/account"
+            element={
+              <RequireAuth>
+                <AccountPage />
               </RequireAuth>
             }
           />

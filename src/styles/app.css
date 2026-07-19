@@ -281,10 +281,11 @@ select.input {
 }
 .status-chip.is-success { background: rgba(74, 222, 128, 0.2); color: var(--success); }
 .status-chip.is-pending { background: rgba(251, 191, 36, 0.2); color: var(--warning); }
-/* Missed/locked text lightened over DESIGN.md — the spec colors sit under
-   4.5:1 on the tinted fills (rule 10). */
+/* Missed/locked/admin text lightened over DESIGN.md — the spec colors sit
+   under 4.5:1 on the tinted fills (rule 10). */
 .status-chip.is-missed { background: rgba(248, 113, 113, 0.2); color: var(--error-text); }
 .status-chip.is-locked { background: rgba(139, 130, 195, 0.2); color: var(--content-secondary); }
+.status-chip.is-admin { background: rgba(167, 139, 250, 0.2); color: #c4b5fd; }
 
 .chip-row {
   display: flex;
@@ -372,9 +373,15 @@ select.input {
   white-space: nowrap;
 }
 
+.navbar-user:hover {
+  color: var(--content-primary);
+  text-decoration: none;
+}
+
 @media (max-width: 640px) {
   .navbar-inner { gap: var(--sp-2); }
-  .navbar-user { display: none; }
+  /* Stays visible — it's the way into /account — just tighter. */
+  .navbar-user { max-width: 72px; }
 }
 
 /* ── Hero ──────────────────────────────────────────────────────────────── */
@@ -1366,6 +1373,88 @@ textarea.input {
   }
   .reader-tapzone-prev { left: 0; }
   .reader-tapzone-next { right: 0; }
+}
+
+/* ── Account ───────────────────────────────────────────────────────────── */
+
+.account-page { max-width: 720px; }
+.account-page h2 { margin: var(--sp-5) 0 var(--sp-3); }
+.account-card { margin-bottom: var(--sp-3); }
+.account-card h3 { margin-bottom: var(--sp-2); }
+
+.account-stale-role {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+.account-stale-role .btn { flex-shrink: 0; }
+
+.account-head {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-3);
+}
+.account-head h3 { margin: 0 0 var(--sp-1); }
+
+.account-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-circle);
+  background: var(--surface-sunken);
+  border: 2px solid var(--nebula);
+  color: var(--nebula);
+  font-family: var(--font-headline);
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-rows { margin: 0 0 var(--sp-4); }
+.account-rows > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.account-rows > div:first-child { border-top: 1px solid var(--border-default); }
+.account-rows dt {
+  color: var(--content-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.account-rows dd {
+  margin: 0;
+  text-align: right;
+  word-break: break-all;
+}
+
+.account-actions {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.account-actions li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-default);
+}
+.account-actions li:last-child { border-bottom: none; }
+.account-action-info h4 { margin: 0 0 2px; }
+.account-action-info p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--content-tertiary);
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────── */

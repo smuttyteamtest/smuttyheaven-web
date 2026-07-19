@@ -29,6 +29,8 @@ interface AuthContextValue {
     displayName?: string;
   }) => Promise<void>;
   logout: () => void;
+  /** Re-read /api/auth/me — picks up role changes made since login. */
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -94,9 +96,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    if (!getToken()) return;
+    try {
+      const me = await fetchMe();
+      setUser(me.user);
+    } catch {
+      // 401 already ended the session via the client handler; on network
+      // errors keep showing the user we have.
+    }
+  }, []);
+
   const value = useMemo(
-    () => ({ user, booting, login, register, logout }),
-    [user, booting, login, register, logout],
+    () => ({ user, booting, login, register, logout, refreshUser }),
+    [user, booting, login, register, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
