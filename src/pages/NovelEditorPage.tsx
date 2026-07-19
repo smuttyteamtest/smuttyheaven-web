@@ -5,6 +5,7 @@ import { fetchNovel, updateNovel } from "../api/endpoints";
 import type { ChapterSummary, NovelDetail, NovelStatus } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
+import { usePageMeta } from "../hooks/usePageMeta";
 import ChapterEditorPanel, {
   type SavedChapter,
 } from "../components/ChapterEditorPanel";
@@ -57,6 +58,11 @@ export default function NovelEditorPage() {
   const server = detail.data?.novel ?? null;
   const settled = detail.data !== undefined;
   const localMode = settled && !server;
+
+  const editingTitle = server?.title ?? local?.title;
+  usePageMeta({
+    title: editingTitle ? `${editingTitle} · Studio` : "Studio",
+  });
 
   // ── Novel details form (writers/admins) ────────────────────────────────
   const [form, setForm] = useState<DetailsForm | null>(null);

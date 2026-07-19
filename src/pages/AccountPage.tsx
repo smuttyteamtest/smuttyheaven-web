@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getToken } from "../api/client";
 import type { Role } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
+import { usePageMeta } from "../hooks/usePageMeta";
 import { formatDate } from "../lib/format";
 import { tokenRole } from "../lib/jwt";
 
@@ -37,6 +38,7 @@ const BLOCKED_ACTIONS = [
 ];
 
 export default function AccountPage() {
+  usePageMeta({ title: "Account" });
   const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
 

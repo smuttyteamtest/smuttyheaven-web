@@ -14,6 +14,12 @@ export function formatNumber(n: number): string {
   return n.toLocaleString();
 }
 
+/** Raw WordPress HTML → collapsed plain text (for meta descriptions). */
+export function htmlToText(html: string): string {
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  return (doc.body.textContent ?? "").replace(/\s+/g, " ").trim();
+}
+
 /** Reader URL. Slug kept for pretty URLs; lookups are by numeric id. */
 export function novelPath(id: number, slug?: string): string {
   return slug ? `/novel/${id}/${slug}` : `/novel/${id}`;

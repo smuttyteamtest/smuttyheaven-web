@@ -6,6 +6,7 @@ import {
 } from "../api/endpoints";
 import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
+import { usePageMeta } from "../hooks/usePageMeta";
 import FeaturedRail from "../components/FeaturedRail";
 import GenreChips from "../components/GenreChips";
 import Rail from "../components/Rail";
@@ -15,6 +16,7 @@ import { novelPath, readerPath } from "../lib/format";
 export default function HomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  usePageMeta(); // site default title
 
   // Admin-curated hero — the rail hides itself while nothing is featured.
   const featured = useAsync(

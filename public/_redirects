@@ -1,0 +1,3 @@
+# SPA fallback (Netlify): /novel/8757 etc. are client-side routes — every
+# path serves index.html and React Router takes over.
+/*  /index.html  200
