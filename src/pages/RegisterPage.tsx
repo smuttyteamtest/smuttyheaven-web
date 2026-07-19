@@ -1,12 +1,14 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 // Mirrors the server's validation rules (FRONTEND.md §7).
 const USERNAME_RE = /^[A-Za-z0-9 _.\-@]{3,60}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function RegisterPage() {
+  usePageMeta({ title: "Sign up" });
   const { register } = useAuth();
   const navigate = useNavigate();
 

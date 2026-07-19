@@ -6,13 +6,14 @@ import {
 } from "../api/endpoints";
 import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
+import { usePageMeta } from "../hooks/usePageMeta";
 import ChapterList from "../components/ChapterList";
 import Cover from "../components/Cover";
 import ListButtons from "../components/ListButtons";
 import Rail from "../components/Rail";
 import SafeHtml from "../components/SafeHtml";
 import { SkeletonLines } from "../components/Skeletons";
-import { formatDate, novelPath, readerPath } from "../lib/format";
+import { formatDate, htmlToText, novelPath, readerPath } from "../lib/format";
 
 export default function NovelPage() {
   const { id } = useParams();
@@ -35,6 +36,13 @@ export default function NovelPage() {
     [novelId, user?.id],
     Number.isFinite(novelId) && !!user,
   );
+
+  usePageMeta({
+    title: novel.data?.title,
+    description: novel.data?.description
+      ? htmlToText(novel.data.description).slice(0, 180) || undefined
+      : undefined,
+  });
 
   if (!Number.isFinite(novelId)) {
     return (

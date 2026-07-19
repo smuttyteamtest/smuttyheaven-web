@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { addToList, checkList, removeFromList } from "../api/endpoints";
 import type { ListType } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
+import { useToast } from "./Toasts";
 
 const LISTS: { type: ListType; label: string; icon: string }[] = [
   { type: "saved", label: "Save", icon: "🔖" },
@@ -12,6 +13,7 @@ const LISTS: { type: ListType; label: string; icon: string }[] = [
 /** Saved / Favourite / Archived toggles on the novel detail page. */
 export default function ListButtons({ novelId }: { novelId: number }) {
   const { user } = useAuth();
+  const toast = useToast();
   const [membership, setMembership] = useState<Record<ListType, boolean>>({
     saved: false,
     favourite: false,
@@ -49,8 +51,11 @@ export default function ListButtons({ novelId }: { novelId: number }) {
     try {
       if (inList) await removeFromList(type, novelId);
       else await addToList(type, novelId);
-    } catch {
+    } catch (err) {
       setMembership((m) => ({ ...m, [type]: inList }));
+      const detail =
+        err instanceof Error ? err.message : "something went wrong";
+      toast(`Couldn't update your ${type} list — ${detail}`);
     } finally {
       setPending(null);
     }

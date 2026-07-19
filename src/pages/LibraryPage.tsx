@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { fetchHistory, fetchList } from "../api/endpoints";
 import type { ListType } from "../api/types";
 import { useAsync } from "../hooks/useAsync";
+import { usePageMeta } from "../hooks/usePageMeta";
 import NovelCard from "../components/NovelCard";
 import Pager from "../components/Pager";
 import { SkeletonGrid } from "../components/Skeletons";
@@ -23,6 +24,7 @@ export default function LibraryPage() {
   const tabParam = params.get("tab") as Tab | null;
   const tab: Tab = TABS.some((t) => t.key === tabParam) ? tabParam! : "saved";
   const [page, setPage] = useState(1);
+  usePageMeta({ title: "My Library" });
 
   function switchTab(next: Tab) {
     setParams(next === "saved" ? {} : { tab: next }, { replace: true });

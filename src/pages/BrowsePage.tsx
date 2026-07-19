@@ -4,6 +4,7 @@ import { fetchNovels } from "../api/endpoints";
 import type { NovelSort } from "../api/types";
 import { useAsync } from "../hooks/useAsync";
 import { useDebounce } from "../hooks/useDebounce";
+import { usePageMeta } from "../hooks/usePageMeta";
 import GenreChips from "../components/GenreChips";
 import NovelCard from "../components/NovelCard";
 import Pager from "../components/Pager";
@@ -23,6 +24,18 @@ export default function BrowsePage() {
   const sort = (params.get("sort") as NovelSort | null) ?? "latest";
   const page = Math.max(1, Number(params.get("page")) || 1);
   const urlSearch = params.get("search") ?? "";
+
+  // "Fantasy novels" / "Search “sword”" / "Browse novels", by specificity.
+  const genreLabel = genre
+    ? genre.charAt(0).toUpperCase() + genre.slice(1).replace(/-/g, " ")
+    : undefined;
+  usePageMeta({
+    title: urlSearch
+      ? `Search “${urlSearch}”`
+      : genreLabel
+        ? `${genreLabel} novels`
+        : "Browse novels",
+  });
 
   // Local input state, debounced into the URL (search hits the live DB —
   // no rate limiting server-side, so don't fire per keystroke).

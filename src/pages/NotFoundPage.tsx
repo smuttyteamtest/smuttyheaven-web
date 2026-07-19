@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function NotFoundPage() {
+  usePageMeta({ title: "Page not found" });
   return (
     <div className="container empty-state" style={{ paddingTop: "var(--sp-8)" }}>
       <span className="empty-icon" aria-hidden>

@@ -1,8 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
+import { usePageMeta } from "../hooks/usePageMeta";
 
 export default function LoginPage() {
+  usePageMeta({ title: "Log in" });
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

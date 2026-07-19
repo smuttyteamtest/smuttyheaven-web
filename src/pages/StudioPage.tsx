@@ -6,6 +6,7 @@ import type { Novel, NovelStatus } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
 import { useDebounce } from "../hooks/useDebounce";
+import { usePageMeta } from "../hooks/usePageMeta";
 import StatusChip from "../components/StatusChip";
 import { formatDate, novelPath } from "../lib/format";
 import { canWrite, explain403 } from "../lib/roles";
@@ -22,6 +23,7 @@ import {
  * created here plus published novels the user chose to track.
  */
 export default function StudioPage() {
+  usePageMeta({ title: "Studio" });
   const { user } = useAuth();
   const navigate = useNavigate();
   const uid = user?.id;

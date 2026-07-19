@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   fetchChapter,
@@ -7,18 +7,22 @@ import {
 } from "../api/endpoints";
 import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
+import { usePageMeta } from "../hooks/usePageMeta";
 import SafeHtml from "../components/SafeHtml";
 import { SkeletonLines } from "../components/Skeletons";
+import { useToast } from "../components/Toasts";
 import { novelPath, readerPath } from "../lib/format";
 
 const FONT_KEY = "novvels_reader_font";
 const FONT_SIZES = [16, 18, 20, 22, 24];
+const scrollKey = (chapterId: number) => `novvels_scroll_${chapterId}`;
 
 export default function ReaderPage() {
   const { novelId: novelIdParam, chapterId: chapterIdParam } = useParams();
   const novelId = Number(novelIdParam);
   const chapterId = Number(chapterIdParam);
   const { user } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
 
   const valid = Number.isFinite(novelId) && Number.isFinite(chapterId);
@@ -27,6 +31,13 @@ export default function ReaderPage() {
   // from the novel's chapter array, cached across chapter hops.
   const novel = useAsync(() => fetchNovelCached(novelId), [novelId], valid);
   const chapter = useAsync(() => fetchChapter(chapterId), [chapterId], valid);
+
+  usePageMeta({
+    title:
+      novel.data && chapter.data
+        ? `${chapter.data.name} · ${novel.data.title}`
+        : novel.data?.title,
+  });
 
   const [fontIdx, setFontIdx] = useState(() => {
     const stored = Number(localStorage.getItem(FONT_KEY));
@@ -41,11 +52,57 @@ export default function ReaderPage() {
   // PUT is an idempotent upsert, so double-fires are harmless.
   useEffect(() => {
     if (!valid || !user) return;
-    saveProgress(novelId, chapterId).catch(() => {});
-  }, [valid, user, novelId, chapterId]);
+    saveProgress(novelId, chapterId).catch(() => {
+      toast(
+        "Couldn't save your reading progress — Continue reading may lag behind.",
+      );
+    });
+  }, [valid, user, novelId, chapterId, toast]);
 
-  useEffect(() => {
+  // Scroll memory: each chapter remembers its position for the session, so
+  // detouring to the chapter list (or another tab) and back lands you where
+  // you were. `restored` gates the writer so the reset-to-top on navigation
+  // doesn't clobber the stored spot before it's been re-applied.
+  const restored = useRef(false);
+  // Layout effect for the same reason as the listener below: the gate must
+  // close before the browser can emit a clamped scroll for the new chapter.
+  useLayoutEffect(() => {
+    restored.current = false;
     window.scrollTo({ top: 0 });
+  }, [chapterId]);
+
+  // Restore only once *this* chapter's text is in the DOM — until then the
+  // page is a skeleton (or the previous chapter) and the target offset
+  // doesn't exist yet.
+  const contentReady = chapter.data?.id === chapterId || !!chapter.error;
+  useEffect(() => {
+    if (!contentReady || restored.current) return;
+    const stored = Number(sessionStorage.getItem(scrollKey(chapterId)));
+    if (stored > 0) window.scrollTo({ top: stored });
+    restored.current = true;
+  }, [chapterId, contentReady]);
+
+  // Layout effect: its cleanup runs synchronously while this page's DOM is
+  // being swapped out. With a plain useEffect the browser clamps scrollY to
+  // the next page's (shorter) height and fires a scroll event before the
+  // deferred cleanup detaches the listener — clobbering the saved position.
+  useLayoutEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (!restored.current) return;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        sessionStorage.setItem(
+          scrollKey(chapterId),
+          String(Math.round(window.scrollY)),
+        );
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
   }, [chapterId]);
 
   const sorted = useMemo(
@@ -56,6 +113,26 @@ export default function ReaderPage() {
   const prev = position > 0 ? sorted[position - 1] : undefined;
   const next =
     position >= 0 && position < sorted.length - 1 ? sorted[position + 1] : undefined;
+
+  // Arrow keys page between chapters (keyboard reading, a11y).
+  const prevId = prev?.id;
+  const nextId = next?.id;
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.defaultPrevented) return;
+      if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+        return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, select, [contenteditable]")) return;
+      if (event.key === "ArrowLeft" && prevId !== undefined) {
+        navigate(readerPath(novelId, prevId));
+      } else if (event.key === "ArrowRight" && nextId !== undefined) {
+        navigate(readerPath(novelId, nextId));
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [prevId, nextId, novelId, navigate]);
 
   if (!valid) {
     return (
@@ -155,6 +232,25 @@ export default function ReaderPage() {
       </article>
 
       <div className="reader-nav">{navButtons}</div>
+
+      {/* Touch-edge page turns; mirrors of Prev/Next, so hidden from AT and
+          the tab order. Desktop hides them entirely (see app.css). */}
+      <div className="reader-tapzones" aria-hidden="true">
+        <button
+          type="button"
+          className="reader-tapzone reader-tapzone-prev"
+          tabIndex={-1}
+          disabled={!prev}
+          onClick={() => prev && navigate(readerPath(novelId, prev.id))}
+        />
+        <button
+          type="button"
+          className="reader-tapzone reader-tapzone-next"
+          tabIndex={-1}
+          disabled={!next}
+          onClick={() => next && navigate(readerPath(novelId, next.id))}
+        />
+      </div>
     </>
   );
 }

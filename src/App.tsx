@@ -19,8 +19,12 @@ import StudioPage from "./pages/StudioPage";
 export default function App() {
   return (
     <>
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <NavBar />
-      <main className="app-main">
+      {/* tabIndex lets the skip link land focus here */}
+      <main id="main" className="app-main" tabIndex={-1}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/browse" element={<BrowsePage />} />
