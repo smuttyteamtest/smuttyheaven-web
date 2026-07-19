@@ -9,7 +9,7 @@ import { useAuth } from "../auth/AuthContext";
 import { useAsync } from "../hooks/useAsync";
 import SafeHtml from "../components/SafeHtml";
 import { SkeletonLines } from "../components/Skeletons";
-import { novelPath, readerPath } from "../lib/format";
+import { formatChapterHtml, novelPath, readerPath } from "../lib/format";
 
 const FONT_KEY = "novvels_reader_font";
 const FONT_SIZES = [16, 18, 20, 22, 24];
@@ -140,7 +140,7 @@ export default function ReaderPage() {
         ) : chapter.loading ? (
           <SkeletonLines count={14} />
         ) : chapter.data?.content ? (
-          <SafeHtml html={chapter.data.content} />
+          <SafeHtml html={formatChapterHtml(chapter.data.content)} />
         ) : (
           <div className="empty-state">
             <span className="empty-icon" aria-hidden>

@@ -104,7 +104,7 @@ export default function ChapterList({
               className={chapter.id === currentChapterId ? "is-current" : undefined}
             >
               <Link to={readerPath(novelId, chapter.id)}>
-                <span className="chapter-num">#{chapter.index + 1}</span>
+                <span className="chapter-num">#{chapter.index}</span>
                 <span className="chapter-name">{chapter.name}</span>
                 {chapter.id === currentChapterId && (
                   <span className="status-chip is-pending">Reading</span>

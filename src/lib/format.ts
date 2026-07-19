@@ -22,3 +22,21 @@ export function novelPath(id: number, slug?: string): string {
 export function readerPath(novelId: number, chapterId: number): string {
   return `/novel/${novelId}/read/${chapterId}`;
 }
+
+/**
+ * Migrated chapter HTML opens with the title and translator/editor credits
+ * inline, often with a cramped colon ("Translator:Hellscythe_"). Put a space on
+ * each side of the colon — but ONLY on the leading <strong> title and the known
+ * credit labels, never on body colons (times like "10:30", "System:" lines,
+ * dialogue). Done at render time so the source text is left untouched.
+ */
+export function formatChapterHtml(html: string): string {
+  return html
+    // Leading <strong>…</strong> chapter heading: space its colon(s).
+    .replace(
+      /^(\s*)<strong>(.*?)<\/strong>/i,
+      (_m, lead, inner) => `${lead}<strong>${inner.replace(/\s*:\s*/g, " : ")}</strong>`,
+    )
+    // Credit lines: "Translator:X" or "Translator: X" → "Translator : X".
+    .replace(/\b(Translator|Editor|Proofreader|TLC)\s*:\s*/gi, "$1 : ");
+}
