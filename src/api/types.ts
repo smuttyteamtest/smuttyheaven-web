@@ -53,6 +53,17 @@ export interface MeResponse {
   user: PublicUser;
 }
 
+// Account self-service (PATCH/DELETE /api/auth/me — see account_api_handoff.md).
+// Profile edits reuse MeResponse ({ user }).
+export interface PasswordChangeResponse {
+  updated: boolean;
+  token?: string; // fresh token to rotate into the session, if issued
+}
+
+export interface AccountDeletedResponse {
+  deleted: boolean;
+}
+
 // ── Catalog ──────────────────────────────────────────────────────────────
 export interface Novel {
   id: number;

@@ -1510,20 +1510,27 @@ textarea.input {
   padding: 0;
 }
 .account-actions li {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sp-3);
   padding: 12px 0;
   border-bottom: 1px solid var(--border-default);
 }
 .account-actions li:last-child { border-bottom: none; }
+.account-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+.account-action-row .btn { flex-shrink: 0; }
 .account-action-info h4 { margin: 0 0 2px; }
 .account-action-info p {
   margin: 0;
   font-size: 14px;
   color: var(--content-tertiary);
 }
+
+.account-form { margin-top: var(--sp-3); }
+.account-form .field:last-of-type { margin-bottom: var(--sp-3); }
+.account-form-actions { display: flex; gap: var(--sp-2); }
 
 /* ── Footer ────────────────────────────────────────────────────────────── */
 

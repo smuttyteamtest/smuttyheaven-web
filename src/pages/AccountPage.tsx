@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { getToken } from "../api/client";
 import type { Role } from "../api/types";
 import { useAuth } from "../auth/AuthContext";
+import AccountManagePanel from "../components/AccountManagePanel";
 import { usePageMeta } from "../hooks/usePageMeta";
 import { formatDate } from "../lib/format";
 import { tokenRole } from "../lib/jwt";
@@ -13,29 +14,6 @@ const ROLE_CHIPS: Record<Role, { label: string; cls: string }> = {
   translator: { label: "Translator", cls: "is-pending" },
   admin: { label: "Admin", cls: "is-admin" },
 };
-
-// No account self-service in the API yet (handoff §8.5) — these render
-// disabled until the backend ships the endpoints.
-const BLOCKED_ACTIONS = [
-  {
-    title: "Display name & email",
-    detail: "Shown on your profile and used to log in.",
-    button: "Edit",
-    destructive: false,
-  },
-  {
-    title: "Password",
-    detail: "There is no password change or reset yet.",
-    button: "Change",
-    destructive: false,
-  },
-  {
-    title: "Delete account",
-    detail: "Permanently remove your account and library.",
-    button: "Delete",
-    destructive: true,
-  },
-];
 
 export default function AccountPage() {
   usePageMeta({ title: "Account" });
@@ -116,31 +94,7 @@ export default function AccountPage() {
         </button>
       </div>
 
-      <div className="card account-card">
-        <h3>Manage account</h3>
-        <ul className="account-actions">
-          {BLOCKED_ACTIONS.map((action) => (
-            <li key={action.title}>
-              <div className="account-action-info">
-                <h4>{action.title}</h4>
-                <p>{action.detail}</p>
-              </div>
-              <button
-                className={`btn btn-sm ${action.destructive ? "btn-destructive" : "btn-secondary"}`}
-                disabled
-                title="Not available yet"
-              >
-                {action.button}
-              </button>
-            </li>
-          ))}
-        </ul>
-        <div className="note-banner">
-          These aren&apos;t available yet — the SmuttyHeaven API doesn&apos;t support
-          editing your profile, changing passwords, or deleting accounts. They
-          will light up here once the backend ships those endpoints.
-        </div>
-      </div>
+      <AccountManagePanel user={user} />
     </div>
   );
 }

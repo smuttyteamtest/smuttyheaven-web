@@ -13,7 +13,13 @@ import {
   setToken,
   setUnauthorizedHandler,
 } from "../api/client";
-import { fetchMe, login as apiLogin, register as apiRegister } from "../api/endpoints";
+import {
+  changePassword as apiChangePassword,
+  fetchMe,
+  login as apiLogin,
+  register as apiRegister,
+  updateProfile as apiUpdateProfile,
+} from "../api/endpoints";
 import type { PublicUser } from "../api/types";
 import { useOptionalToast } from "../components/Toasts";
 
@@ -31,6 +37,17 @@ interface AuthContextValue {
   logout: () => void;
   /** Re-read /api/auth/me — picks up role changes made since login. */
   refreshUser: () => Promise<void>;
+  /** Edit displayName/email; syncs the returned user into the session. */
+  updateProfile: (data: {
+    displayName?: string;
+    email?: string;
+    currentPassword?: string;
+  }) => Promise<void>;
+  /** Change password; rotates the session token when the API returns one. */
+  changePassword: (data: {
+    currentPassword: string;
+    newPassword: string;
+  }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -107,9 +124,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const updateProfile = useCallback(
+    async (data: { displayName?: string; email?: string; currentPassword?: string }) => {
+      const { user: updated } = await apiUpdateProfile(data);
+      setUser(updated);
+    },
+    [],
+  );
+
+  const changePassword = useCallback(
+    async (data: { currentPassword: string; newPassword: string }) => {
+      const { token } = await apiChangePassword(data);
+      // Old token stays valid until expiry (stateless JWT), but rotate to the
+      // fresh one when the API issues it so this device stays clean.
+      if (token) setToken(token);
+    },
+    [],
+  );
+
   const value = useMemo(
-    () => ({ user, booting, login, register, logout, refreshUser }),
-    [user, booting, login, register, logout, refreshUser],
+    () => ({
+      user,
+      booting,
+      login,
+      register,
+      logout,
+      refreshUser,
+      updateProfile,
+      changePassword,
+    }),
+    [user, booting, login, register, logout, refreshUser, updateProfile, changePassword],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

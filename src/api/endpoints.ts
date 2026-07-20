@@ -1,5 +1,6 @@
 import { api, qs } from "./client";
 import type {
+  AccountDeletedResponse,
   AdminStats,
   AdminUserResponse,
   AdminUsersResponse,
@@ -23,6 +24,7 @@ import type {
   NovelSort,
   NovelStatus,
   NovelsResponse,
+  PasswordChangeResponse,
   Progress,
   RecommendationsResponse,
   RelatedResponse,
@@ -53,6 +55,40 @@ export function register(data: {
 
 export function fetchMe(): Promise<MeResponse> {
   return api("/api/auth/me");
+}
+
+// ── Account self-service ───────────────────────────────────────────────────
+// All three act on the caller's own account (id comes from the token, never a
+// path). Wrong-password re-auth returns 403, NOT 401, so it never trips the
+// global 401 → logout handler in the client. See account_api_handoff.md §1.1.
+
+// Edit displayName and/or email. `currentPassword` is required by the API only
+// when `email` changes. Returns the fresh { user } (same shape as fetchMe).
+export function updateProfile(data: {
+  displayName?: string;
+  email?: string;
+  currentPassword?: string;
+}): Promise<MeResponse> {
+  return api("/api/auth/me", { method: "PATCH", body: JSON.stringify(data) });
+}
+
+export function changePassword(data: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<PasswordChangeResponse> {
+  return api("/api/auth/me/password", {
+    method: "PATCH",
+    body: JSON.stringify(data),
+  });
+}
+
+// Re-auths with the current password. Irreversible — cascades the user's lists,
+// progress, and history server-side.
+export function deleteAccount(password: string): Promise<AccountDeletedResponse> {
+  return api("/api/auth/me", {
+    method: "DELETE",
+    body: JSON.stringify({ password }),
+  });
 }
 
 // ── Catalog ──────────────────────────────────────────────────────────────

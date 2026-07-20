@@ -1220,9 +1220,16 @@ so writer-created novels won't appear in genre filters, `related`, or
 
 genre-based recommendations.
 
-5. **No account self-service** — no password change/reset, no profile edit,
+5. ~~**No account self-service**~~ — **Partially resolved 2026-07-20:**
 
-no email verification, no account deletion.
+`PATCH /api/auth/me` (edit displayName/email — email changes re-auth with the
+current password), `PATCH /api/auth/me/password` (change password, returns a
+fresh token), and `DELETE /api/auth/me` (delete account, re-auths) now exist;
+the `/account` page wires all three. Wrong-password re-auth returns **403**,
+not **401**, so it doesn't trip the client's global logout. A deleted user's
+orphaned token now resolves to **401** on any authenticated request (requireAuth
+does a PK existence check). Still missing: **password reset** (forgot-password,
+unauthenticated) and **email verification** — see `account_api_handoff.md`.
 
 6. **No logout/refresh token endpoints** — logout is client-side discard;
 
